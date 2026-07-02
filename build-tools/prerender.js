@@ -9,7 +9,7 @@ const vm = require('vm');
 const { JSDOM } = require('jsdom');
 
 const PB = path.join(__dirname, '..', 'prod-build');
-const SITE = 'https://nosibeleembroidery.co.za';
+const SITE = 'https://www.nosibeleembroidery.co.za';
 
 const PAGES = [
   { file: 'index.html',    component: 'App',          loc: SITE + '/',              changefreq: 'weekly',  priority: '1.0' },

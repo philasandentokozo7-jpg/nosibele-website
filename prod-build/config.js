@@ -13,7 +13,7 @@ window.NB_CONFIG = {
   description: 'Nosibele Design & Embroidery is a Durban-based embroidery and custom apparel studio specialising in premium embroidery, school uniforms, corporate wear, workwear, golf shirts, sublimation printing, branded apparel, promotional clothing and personalised garments.',
 
   domain: 'nosibeleembroidery.co.za',
-  url: 'https://nosibeleembroidery.co.za',
+  url: 'https://www.nosibeleembroidery.co.za',
 
   phone: '061 445 3680',
   phoneIntl: '+27 61 445 3680',
@@ -59,7 +59,7 @@ window.NB_CONFIG = {
   seo: {
     title: 'Nosibele Design & Embroidery | Premium Embroidery & Custom Apparel in Durban',
     description: 'Premium embroidery, custom uniforms, golf shirts, school uniforms, workwear, corporate branding, sublimation printing and personalised apparel in Durban, South Africa.',
-    ogImage: 'https://nosibeleembroidery.co.za/og-image.jpg',
+    ogImage: 'https://www.nosibeleembroidery.co.za/og-image.jpg',
   },
 
   /* Quote form delivery — Formspree (sends submissions to quotes@nosibeleembroidery.co.za). */
