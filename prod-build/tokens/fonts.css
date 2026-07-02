@@ -1,0 +1,9 @@
+/* Nosibele — Webfonts
+   Display:  Cormorant Garamond — high-contrast luxury editorial serif (headings, prices, hero)
+   Body/UI:  Manrope — clean, warm modern grotesque (paragraphs, labels, buttons)
+   Script:   Pinyon Script — flourished accent echoing the embroidered wordmark (use sparingly)
+
+   NOTE: These are Google Fonts substitutes. The Nosibele wordmark itself is custom
+   embroidery lettering (not a font) — use the logo asset for the brand mark, never type.
+*/
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Manrope:wght@400;500;600;700;800&family=Pinyon+Script&display=swap');

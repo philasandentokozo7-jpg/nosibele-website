@@ -1,0 +1,42 @@
+/* ============================================================
+   NOSIBELE — SPACING, RADII, LAYOUT TOKENS
+   8px base rhythm, with a few half-steps.
+   ============================================================ */
+:root {
+  --space-0:  0;
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  24px;
+  --space-6:  32px;
+  --space-7:  48px;
+  --space-8:  64px;
+  --space-9:  96px;
+  --space-10: 128px;
+  --space-11: 160px;
+
+  /* Section rhythm */
+  --section-y: clamp(80px, 9.5vw, 168px); /* @kind spacing */
+  --gutter:    clamp(22px, 5vw, 72px); /* @kind spacing */
+
+  /* Containers */
+  --container-xl: 1280px;
+  --container-lg: 1120px;
+  --container-md: 880px;
+  --container-sm: 640px;
+
+  /* Radii — soft, refined; never bubbly */
+  --radius-xs:  4px;
+  --radius-sm:  8px;
+  --radius-md:  12px;
+  --radius-lg:  18px;
+  --radius-xl:  28px;
+  --radius-pill: 999px;
+  --radius-card: var(--radius-lg);
+
+  /* Control sizing */
+  --control-h-sm: 40px;
+  --control-h-md: 48px;   /* min touch target ≥ 44px */
+  --control-h-lg: 56px;
+}

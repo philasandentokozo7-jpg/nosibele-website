@@ -1,0 +1,92 @@
+/* ============================================================
+   NOSIBELE — COLOR TOKENS
+   Sampled from the embroidered gold-on-crimson logo.
+   Base ramps first, then semantic aliases.
+   ============================================================ */
+:root {
+  /* ---- Crimson (the signature red linen of the brand) ---- */
+  --crimson-100: #FBE6E2;
+  --crimson-300: #E8716B;
+  --crimson-500: #C8121A;   /* primary brand red */
+  --crimson-600: #AC0F16;
+  --crimson-700: #8C0C12;
+
+  /* ---- Deep Burgundy (grounding, premium depth) ---- */
+  --burgundy-400: #7A1E2A;
+  --burgundy-500: #5E1119;
+  --burgundy-600: #480B11;
+  --burgundy-700: #350810;
+
+  /* ---- Luxury Gold (metallic embroidery thread) ---- */
+  --gold-pale:    #F1DDA6;  /* lit highlight */
+  --gold-300:     #E2BE72;
+  --gold-500:     #C8A14A;  /* metallic mid — the "gold" */
+  --gold-600:     #A8791F;  /* burnished shadow */
+  --gold-700:     #855E15;
+
+  /* ---- Warm Brown (earthen, modern-African warmth) ---- */
+  --brown-400: #8A5A33;
+  --brown-500: #6E4423;
+  --brown-600: #4A2C16;
+
+  /* ---- Cream (paper / canvas backdrop) ---- */
+  --cream-50:  #FDFAF3;
+  --cream-100: #FAF4E8;   /* page cream */
+  --cream-200: #F3E9D4;
+  --cream-300: #E9DABE;
+
+  /* ---- Charcoal / Ink (text & dark surfaces) ---- */
+  --charcoal-900: #1C1714;  /* near-black ink */
+  --charcoal-800: #2A2320;
+  --charcoal-700: #3A322C;
+  --charcoal-500: #5C5046;
+
+  --white: #FFFFFF;
+
+  /* ---- Warm neutral ramp (borders, muted text) ---- */
+  --warm-100: #EFE7DA;
+  --warm-200: #DED2BF;
+  --warm-400: #A4988A;
+  --warm-600: #7A6E63;
+
+  /* ---- Semantic status (kept warm & restrained) ---- */
+  --success: #4E7A3E;
+  --info:    #3F6F86;
+  --warning: var(--gold-600);
+  --danger:  var(--crimson-600);
+
+  /* ============================================================
+     SEMANTIC ALIASES — reference these in components, not the ramps
+     ============================================================ */
+  --brand-primary:   var(--crimson-500);
+  --brand-deep:      var(--burgundy-500);
+  --brand-accent:    var(--gold-500);
+  --brand-accent-lit:var(--gold-pale);
+
+  /* Surfaces */
+  --bg-page:         var(--cream-100);
+  --bg-page-soft:    var(--cream-50);
+  --surface-card:    var(--white);
+  --surface-cream:   var(--cream-200);
+  --surface-inverse: var(--charcoal-900);
+  --surface-crimson: var(--crimson-500);
+  --surface-burgundy:var(--burgundy-500);
+
+  /* Text */
+  --text-strong:   var(--charcoal-900);
+  --text-body:     var(--charcoal-700);
+  --text-muted:    var(--warm-600);
+  --text-on-dark:  var(--cream-100);
+  --text-on-dark-muted: rgba(250,244,232,0.66);
+  --text-on-crimson: var(--cream-50);
+  --text-gold:     var(--gold-600);
+
+  /* Lines & borders */
+  --border-hairline: rgba(28,23,20,0.10);
+  --border-soft:     rgba(28,23,20,0.16);
+  --border-gold:     var(--gold-500);
+  --border-on-dark:  rgba(241,221,166,0.22);
+
+  /* Interactive */
+  --focus-ring: var(--gold-500);
+}

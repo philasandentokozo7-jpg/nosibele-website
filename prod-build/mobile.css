@@ -1,0 +1,193 @@
+/* ============================================================
+   NOSIBELE — MOBILE FLAGSHIP LAYER
+   Desktop is untouched: every rule lives inside a phone media query.
+   Overrides inline styles with !important where needed. Loaded last.
+   ============================================================ */
+
+@media (max-width: 768px) {
+  html, body { overflow-x: hidden; }
+
+  /* Tighten the (very large) desktop rhythm for a dense, premium phone feel */
+  :root {
+    --section-y: 60px;
+    --gutter: 20px;
+  }
+
+  /* ---------------------------------------------------------
+     NAV — premium animated full-width menu
+     --------------------------------------------------------- */
+  .nb-mobilemenu {
+    padding: 6px 20px 26px !important;
+    gap: 2px !important;
+    animation: nbMenuIn 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    background: rgba(253, 250, 243, 0.96);
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    border-top: 1px solid var(--border-hairline);
+  }
+  .nb-mobilemenu a {
+    font-size: 26px !important;
+    padding: 15px 4px !important;
+    opacity: 0;
+    animation: nbItemIn 460ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+  .nb-mobilemenu a:nth-child(1) { animation-delay: 60ms; }
+  .nb-mobilemenu a:nth-child(2) { animation-delay: 110ms; }
+  .nb-mobilemenu a:nth-child(3) { animation-delay: 160ms; }
+  .nb-mobilemenu a:nth-child(4) { animation-delay: 210ms; }
+  .nb-mobilemenu a:nth-child(5) { animation-delay: 260ms; }
+  .nb-mobilemenu a:nth-child(6) { animation-delay: 310ms; }
+  .nb-mobilemenu > div { margin-top: 18px !important; }
+  @keyframes nbMenuIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes nbItemIn { from { opacity: 0; transform: translateX(-14px); } to { opacity: 1; transform: none; } }
+
+  /* ---------------------------------------------------------
+     HERO — image is the centrepiece, then editorial text
+     --------------------------------------------------------- */
+  .nb-hero {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 26px !important;
+    padding: 18px var(--gutter) 8px !important;
+    text-align: center;
+  }
+  .nb-hero-media { order: -1; }
+  .nb-hero-media > div:first-child {
+    aspect-ratio: 4 / 5 !important;
+    border-radius: var(--radius-xl) !important;
+    box-shadow: 0 30px 60px rgba(58, 28, 12, 0.22) !important;
+  }
+  .nb-hero-text { display: flex; flex-direction: column; align-items: center; }
+  .nb-hero-text > span:first-child { justify-content: center; }
+  .nb-hero-h1 {
+    font-size: clamp(2.7rem, 13vw, 3.6rem) !important;
+    margin-top: 14px !important;
+  }
+  .nb-hero-text > p {
+    font-size: 1.05rem !important;
+    margin-top: 16px !important;
+    max-width: 38ch !important;
+  }
+  .nb-hero-cta {
+    flex-direction: column !important;
+    width: 100%;
+    gap: 11px !important;
+    margin-top: 26px !important;
+  }
+  .nb-hero-cta > * { width: 100% !important; }
+  .nb-hero-cta .nb-btn, .nb-hero-cta .nb-wa {
+    width: 100% !important;
+    height: 58px !important;
+    justify-content: center !important;
+    font-size: 1.05rem !important;
+  }
+
+  /* Floating credential badge → a clean centred chip below the image */
+  .nb-hero-float {
+    position: static !important;
+    margin: -34px auto 0 !important;
+    left: auto !important;
+    bottom: auto !important;
+    width: max-content;
+    background: var(--surface-card) !important;
+    border: 1px solid var(--border-gold) !important;
+    box-shadow: var(--shadow-md) !important;
+    position: relative !important;
+    z-index: 3;
+  }
+
+  /* STATS — three elegant premium cards */
+  .nb-hero-stats {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px !important;
+    width: 100%;
+    margin-top: 30px !important;
+  }
+  .nb-hero-stats > div {
+    background: var(--surface-card);
+    border: 1px solid var(--border-hairline);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-xs);
+    padding: 16px 8px;
+    text-align: center;
+  }
+  .nb-hero-stats > div > div:first-child { font-size: 20px !important; }
+  .nb-hero-stats > div > div:last-child { font-size: 0.62rem !important; }
+
+  /* ---------------------------------------------------------
+     SECTION HEADINGS — balanced phone scale
+     --------------------------------------------------------- */
+  #root h2 { font-size: clamp(1.9rem, 8vw, 2.4rem) !important; }
+
+  /* ---------------------------------------------------------
+     PRODUCTS — refined two-up grid with breathing room
+     --------------------------------------------------------- */
+  #products .nb-cat .nb-cat__title { font-size: 1.2rem; }
+
+  /* ---------------------------------------------------------
+     SERVICES — immersive single-column studio story
+     --------------------------------------------------------- */
+  .nb-feature { padding: 22px !important; border-radius: var(--radius-lg) !important; }
+  .nb-feature::after { inset: 9px !important; }
+  .nb-row__num { font-size: 2.6rem !important; }
+  .nb-journey__label { font-size: 0.95rem !important; }
+
+  /* ---------------------------------------------------------
+     QUOTE — single-column luxury form, big tap targets
+     --------------------------------------------------------- */
+  .nbq-grid { grid-template-columns: 1fr !important; gap: 26px !important; }
+  .nbq-grid > div:last-child { order: -1; }
+  .nbq-card { border-radius: 22px !important; box-shadow: 0 24px 60px rgba(28, 8, 10, 0.4) !important; }
+  .nbq-card__ribbon { padding: 16px 20px !important; }
+  .nbq-card__ribbon-title { font-size: 1.3rem !important; }
+  .nbq-card__body { padding: 22px 18px !important; }
+  .nbq-row2 { grid-template-columns: 1fr !important; gap: 0 !important; }
+  .nbq-row2 > * + * { margin-top: 16px; }
+  .nbq input, .nbq select, .nbq textarea {
+    height: 54px !important;
+    font-size: 16px !important; /* ≥16px stops iOS zoom-on-focus */
+    border-radius: 14px !important;
+  }
+  .nbq textarea { height: auto !important; min-height: 96px !important; }
+  .nbq-seg { height: 54px !important; }
+  .nbq-upload { height: 54px !important; }
+  .nbq .nb-btn { height: 58px !important; font-size: 1.05rem !important; }
+  .nbq h2 { font-size: clamp(2.1rem, 10vw, 2.7rem) !important; }
+
+  /* WhatsApp helper button inside the crimson band — full width */
+  .nbq-grid > div:first-child .nb-wa { width: 100%; justify-content: center; height: 54px; }
+
+  /* ---------------------------------------------------------
+     FAQ — comfortable tap rows
+     --------------------------------------------------------- */
+  #root .nb-faq button, #root [class*="faq"] button { min-height: 56px; }
+
+  /* ---------------------------------------------------------
+     FOOTER — clean stacked hierarchy, centred
+     --------------------------------------------------------- */
+  .nb-foot {
+    grid-template-columns: 1fr !important;
+    gap: 30px !important;
+    text-align: center;
+  }
+  .nb-foot > div:first-child { display: flex; flex-direction: column; align-items: center; }
+  .nb-foot address { text-align: center; }
+  .nb-foot ul { align-items: center; }
+  .nb-foot .nb-wa { margin: 0 auto; }
+  .nb-foot-soc, .nb-foot [aria-label] { }
+
+  /* ---------------------------------------------------------
+     FLOATING CONTROLS — comfortable, never overlapping
+     --------------------------------------------------------- */
+  .nb-totop { width: 46px !important; height: 46px !important; bottom: 18px !important; left: 18px !important; }
+  .nb-wa--floating { bottom: 18px !important; right: 18px !important; }
+}
+
+/* Small phones — single-column products */
+@media (max-width: 460px) {
+  #products .nb-cat,
+  #services .nb-row__media { }
+  .nb-hero-stats { gap: 8px !important; }
+  .nb-hero-stats > div { padding: 14px 6px; }
+}

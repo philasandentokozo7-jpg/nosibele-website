@@ -1,0 +1,12 @@
+# Netlify configuration for the Nosibele website.
+# When this repo is connected to Netlify, every push to GitHub triggers:
+#   1. `npm install` + the prerender build (bakes all page content into the HTML for SEO)
+#   2. Deployment of the prod-build folder as the live site
+# You never need to run anything by hand.
+
+[build]
+  command = "cd build-tools && npm install && node prerender.js"
+  publish = "prod-build"
+
+[build.environment]
+  NODE_VERSION = "20"

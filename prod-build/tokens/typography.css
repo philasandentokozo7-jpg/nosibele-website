@@ -1,0 +1,46 @@
+/* ============================================================
+   NOSIBELE — TYPOGRAPHY TOKENS
+   ============================================================ */
+:root {
+  /* Families */
+  --font-display: 'Cormorant Garamond', 'Hoefler Text', Georgia, serif;
+  --font-body:    'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-script:  'Pinyon Script', 'Snell Roundhand', cursive;
+  --font-mono:    ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Weights */
+  --fw-regular: 400; /* @kind other */
+  --fw-medium:  500; /* @kind other */
+  --fw-semibold:600; /* @kind other */
+  --fw-bold:    700; /* @kind other */
+  --fw-display-regular: 400; /* @kind other */
+  --fw-display-medium:  500; /* @kind other */
+  --fw-display-semibold:600; /* @kind other */
+
+  /* Fluid type scale (display = Cormorant, body = Manrope) */
+  --fs-display-1: clamp(3.25rem, 1.6rem + 6.4vw, 6.5rem); /* @kind other */
+  --fs-display-2: clamp(2.5rem, 1.6rem + 3.8vw, 4.25rem); /* @kind other */
+  --fs-h1:        clamp(2.1rem, 1.4rem + 2.8vw, 3.25rem); /* @kind other */
+  --fs-h2:        clamp(1.7rem, 1.3rem + 1.7vw, 2.35rem); /* @kind other */
+  --fs-h3:        clamp(1.35rem, 1.15rem + 0.9vw, 1.7rem); /* @kind other */
+  --fs-h4:        1.25rem; /* @kind other */
+  --fs-lead:      clamp(1.05rem, 0.98rem + 0.4vw, 1.2rem); /* @kind other */
+  --fs-body:      1rem; /* @kind other */
+  --fs-small:     0.875rem; /* @kind other */
+  --fs-caption:   0.78rem; /* @kind other */
+  --fs-overline:  0.72rem; /* @kind other */
+
+  /* Line heights */
+  --lh-tight:   1.04; /* @kind other */
+  --lh-snug:    1.18; /* @kind other */
+  --lh-normal:  1.55; /* @kind other */
+  --lh-relaxed: 1.7; /* @kind other */
+
+  /* Letter spacing */
+  --ls-display: -0.015em; /* @kind other */
+  --ls-tight:   -0.01em; /* @kind other */
+  --ls-normal:  0em; /* @kind other */
+  --ls-wide:    0.04em; /* @kind other */
+  /* gold eyebrow labels, uppercase, tracked-out */
+  --ls-overline:0.22em; /* @kind other */
+}
