@@ -2883,7 +2883,7 @@ function GalleryPage() {
     img: 'assets/hero-uniform.webp',
     desc: 'Full-colour sublimation finished with an embroidered chest crest.'
   }];
-  const tiles = craft.concat(products);
+  const tiles = craft.concat((window.NB_CATALOGUE && window.NB_CATALOGUE.GALLERY) || [], products);
   const filters = ['All', 'Craftsmanship'].concat(groups);
   const [active, setActive] = React.useState('All');
   const [light, setLight] = React.useState(null);

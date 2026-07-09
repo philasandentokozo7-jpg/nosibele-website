@@ -5,8 +5,8 @@ const A = 'assets/catalogue/';
 const X = '.webp';
 const PRODUCTS = [
   { slug:'corporate-wear', group:'Corporate Wear', cat:'Corporate Wear', title:'Corporate wear', img:A+'corporate-wear'+X, price:null,
-    desc:'Branded golf shirts and team tees with your logo and lettering, finished for a sharp professional look.', badge:'Popular',
-    alt:'Branded corporate golf shirts with an embroidered company logo by Nosibele Design & Embroidery, Durban' },
+    desc:'Branded shirts, golf shirts and team tees with your logo and lettering, finished for a sharp professional look.', badge:'Popular',
+    alt:'Embroidered corporate work shirts with full-colour company logos by Nosibele Design & Embroidery, Durban' },
   { slug:'custom-apparel', group:'Sportswear', cat:'Custom Apparel', title:'Custom sportswear', img:A+'custom-apparel'+X, price:'R100',
     desc:'Personalised jerseys and kit with embroidered names and DTF sticker numbers.',
     alt:'Custom sports jerseys personalised with embroidered names and DTF printed numbers' },
@@ -19,9 +19,9 @@ const PRODUCTS = [
   { slug:'sublimation-dresses', group:'Traditional Wear', cat:'Sublimation Dresses', title:'Sublimation dresses', img:A+'sublimation-dresses'+X, price:null,
     desc:'Made-to-fit event and supporters’ dresses printed in vivid, lasting colour.',
     alt:'Made-to-fit sublimation printed event and supporters’ dresses in vivid colour' },
-  { slug:'dtf-shirts', group:'Traditional Wear', cat:'DTF Shirts', title:'DTF printed shirts', img:A+'dtf-shirts'+X, price:'R75',
-    desc:'Direct-to-film printing on a garment for crisp, detailed full-colour designs.',
-    alt:'DTF direct-to-film printed shirts with crisp, detailed full-colour designs' },
+  { slug:'dtf-shirts', group:'Traditional Wear', cat:'DTF Printing', title:'DTF printing', img:A+'dtf-shirts'+X, price:'R40',
+    desc:'Crisp full-colour direct-to-film prints on shirts, bags and packaging — A5 prints R40, A4 prints R80. Bring your artwork or we design it.',
+    alt:'DTF printed branded gift bags and full-colour transfer sheets by Nosibele Design & Embroidery' },
   { slug:'school-jackets', group:'School & Outerwear', cat:'School Jackets', title:'School sublimation jackets', img:A+'school-jackets'+X, price:'R600',
     desc:'Durable sublimation jackets with names and branding — from R600 on our stock jacket, R650 if you bring your own.',
     alt:'School sublimation jackets printed with learner names and school branding' },
@@ -37,6 +37,40 @@ const PRODUCTS = [
   { slug:'scarves', group:'Accessories', cat:'Scarves', title:'Embroidered scarves', img:A+'scarves'+X, price:'R80',
     desc:'Soft scarves embroidered with names and motifs — a personal, giftable touch.', badge:'Gifting',
     alt:'Soft scarves embroidered with personalised names and decorative motifs' },
+  { slug:'bhinca-tshirt', group:'Traditional Wear', cat:'Bhinca Wear', title:'Bhinca t-shirts', img:A+'bhinca-tshirt'+X, price:'R300',
+    desc:'Statement Bhinca-style cow-print golf shirts — ezama Bhinca, made in Durban.', badge:'New',
+    alt:'Bhinca cow-print golf shirt with black collar by Nosibele Design & Embroidery, Durban' },
+  { slug:'isisholi', group:'Traditional Wear', cat:'Isisholi', title:'Isisholi (embroidered shawls)', img:A+'isisholi'+X, price:'R420',
+    desc:'Embroidered traditional shawls with names, messages and beadwork detail — made for umembeso, weddings and special days.', badge:'New',
+    alt:'White isisholi traditional shawl embroidered with names and blue flower detail' },
+  { slug:'fur-wrap', group:'Traditional Wear', cat:'Fur Wraps', title:'Embroidered fur wraps', img:A+'fur-wrap'+X, price:'R350',
+    desc:'Soft faux-fur shoulder wraps embroidered with your clan name or message — R350 with embroidery.',
+    alt:'White faux-fur shoulder wrap embroidered with a clan name in orange thread' },
+  { slug:'embroidered-bags', group:'Accessories', cat:'Bags', title:'Embroidered bags', img:A+'embroidered-bags'+X, price:'R140',
+    desc:'Lunch, cooler and lady’s bags embroidered with logos or names — plain R140, with logo from R160. Lady’s bag R260, large bag with a name R300, large + lunch set R450.', badge:'New',
+    alt:'Red cooler bag embroidered with a church logo and personal name by Nosibele' },
+  { slug:'school-shirts', group:'School & Outerwear', cat:'School Uniforms', title:'School shirts & sports kits', img:A+'school-shirts'+X, price:null,
+    desc:'Embroidered school shirts, sports kits and uniforms — crests, names and numbers for schools across Durban.',
+    alt:'Yellow and green Sifiso Primary School sports kit with embroidered school crest' },
+];
+
+/* ---- Gallery-only pieces (shown in the Lookbook, not sale cards) ---- */
+const GALLERY = [
+  { slug:'gallery-mzinyeni', group:'Craftsmanship', cat:'School Uniforms', title:'Mzinyeni Primary School shirts', img:A+'gallery-mzinyeni'+X,
+    desc:'Embroidered crests and lettering for Mzinyeni Primary School.',
+    alt:'Yellow Mzinyeni Primary School shirts with embroidered crest and lettering' },
+  { slug:'gallery-school-bags', group:'Craftsmanship', cat:'Bags', title:'School bag sets', img:A+'gallery-school-bags'+X,
+    desc:'Matching embroidered school bags and lunch bags.',
+    alt:'Navy school bag and lunch bag set with embroidered gold school shields' },
+  { slug:'gallery-dtf-sweater', group:'Craftsmanship', cat:'DTF Printing', title:'Custom DTF sweater', img:A+'gallery-dtf-sweater'+X,
+    desc:'Full-colour DTF print on a satin sweater.',
+    alt:'Brown satin sweater with a full-colour I Am Blessed DTF print' },
+  { slug:'gallery-bhudayami', group:'Craftsmanship', cat:'Corporate Wear', title:'Bhudayami Clothing branding', img:A+'gallery-bhudayami'+X,
+    desc:'Gold brand embroidery for Bhudayami Clothing.',
+    alt:'Black t-shirt with gold Bhudayami Clothing logo embroidery' },
+  { slug:'gallery-lashed-laid', group:'Craftsmanship', cat:'Corporate Wear', title:'Lashed & Laid salon golfers', img:A+'gallery-lashed-laid'+X,
+    desc:'Embroidered logo golfers for a Durban beauty salon.',
+    alt:'Pink golf shirt with embroidered Lashed & Laid salon logo' },
 ];
 
 const PRODUCT_GROUPS = ['Corporate Wear', 'Sportswear', 'Traditional Wear', 'School & Outerwear', 'Workwear', 'Accessories'];
@@ -86,4 +120,4 @@ const FAQS = [
   { q: 'Where are you based and do you deliver?', a: 'Our studio is in Durban (Shop 55, Charlotte Maxeke Street, Dominion Arcade). Collect from us, or we courier nationwide across South Africa.' },
 ];
 
-window.NB_CATALOGUE = { PRODUCTS, SERVICES, PRODUCT_GROUPS, REVIEWS, FAQS, WHATSAPP: '0614453680' };
+window.NB_CATALOGUE = { PRODUCTS, SERVICES, PRODUCT_GROUPS, GALLERY, REVIEWS, FAQS, WHATSAPP: '0614453680' };
