@@ -20,7 +20,7 @@ const PAGES = [
   { file: 'contact.html',  component: 'ContactPage',  loc: SITE + '/contact.html',  changefreq: 'monthly', priority: '0.9' },
 ];
 
-const APP_SCRIPTS = ['_ds_bundle.js', 'config.js', 'catalogue.js', 'app.compiled.js'];
+const APP_SCRIPTS = ['nb-app.js', 'config.js', 'catalogue.js', 'app.compiled.js'];
 
 function xmlEscape(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
