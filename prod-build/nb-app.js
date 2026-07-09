@@ -2128,11 +2128,52 @@ function Testimonial() {
       color: 'var(--text-muted)',
       margin: '0 0 14px'
     }
-  }, "Worked with us? We\u2019d love to hear about it."), /*#__PURE__*/React.createElement(WhatsAppButton, {
-    phone: WA,
-    message: waReview,
-    variant: "outline"
-  }, "Leave a review"))));
+  }, "Happy with your order? A quick Google review helps other Durban customers find us."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: 12,
+      justifyContent: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("a", {
+    href: window.NB_CONFIG && window.NB_CONFIG.googleReviewUrl || '#',
+    target: "_blank",
+    rel: "noopener",
+    style: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 9,
+      padding: '13px 24px',
+      borderRadius: 999,
+      background: 'var(--crimson-600)',
+      color: '#fff',
+      fontWeight: 700,
+      textDecoration: 'none'
+    }
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: 18,
+    height: 18,
+    viewBox: "0 0 24 24",
+    "aria-hidden": "true"
+  }, /*#__PURE__*/React.createElement("path", {
+    fill: "#fff",
+    d: "M12 2l2.9 6.3L22 9.2l-5 4.7 1.3 6.9L12 17.5 5.7 20.8 7 13.9l-5-4.7 7.1-.9L12 2z"
+  })), "Leave a Google review"), /*#__PURE__*/React.createElement("a", {
+    href: window.NB_CONFIG && window.NB_CONFIG.googleProfileUrl || '#',
+    target: "_blank",
+    rel: "noopener",
+    style: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 9,
+      padding: '13px 24px',
+      borderRadius: 999,
+      border: '1px solid var(--border-hairline)',
+      color: 'var(--text-strong)',
+      fontWeight: 700,
+      textDecoration: 'none'
+    }
+  }, "See us on Google")))));
 }
 Object.assign(window, {
   Testimonial,
@@ -7542,11 +7583,52 @@ function Testimonial() {
       color: 'var(--text-muted)',
       margin: '0 0 14px'
     }
-  }, "Worked with us? We\u2019d love to hear about it."), /*#__PURE__*/React.createElement(WhatsAppButton, {
-    phone: WA,
-    message: waReview,
-    variant: "outline"
-  }, "Leave a review"))));
+  }, "Happy with your order? A quick Google review helps other Durban customers find us."), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: 12,
+      justifyContent: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("a", {
+    href: window.NB_CONFIG && window.NB_CONFIG.googleReviewUrl || '#',
+    target: "_blank",
+    rel: "noopener",
+    style: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 9,
+      padding: '13px 24px',
+      borderRadius: 999,
+      background: 'var(--crimson-600)',
+      color: '#fff',
+      fontWeight: 700,
+      textDecoration: 'none'
+    }
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: 18,
+    height: 18,
+    viewBox: "0 0 24 24",
+    "aria-hidden": "true"
+  }, /*#__PURE__*/React.createElement("path", {
+    fill: "#fff",
+    d: "M12 2l2.9 6.3L22 9.2l-5 4.7 1.3 6.9L12 17.5 5.7 20.8 7 13.9l-5-4.7 7.1-.9L12 2z"
+  })), "Leave a Google review"), /*#__PURE__*/React.createElement("a", {
+    href: window.NB_CONFIG && window.NB_CONFIG.googleProfileUrl || '#',
+    target: "_blank",
+    rel: "noopener",
+    style: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 9,
+      padding: '13px 24px',
+      borderRadius: 999,
+      border: '1px solid var(--border-hairline)',
+      color: 'var(--text-strong)',
+      fontWeight: 700,
+      textDecoration: 'none'
+    }
+  }, "See us on Google")))));
 }
 Object.assign(window, {
   Testimonial,

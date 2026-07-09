@@ -65,6 +65,10 @@ window.NB_CONFIG = {
   /* Quote form delivery — Formspree (sends submissions to quotes@nosibeleembroidery.co.za). */
   formEndpoint: 'https://formspree.io/f/maqgekdl',
 
+  /* Google Business Profile — reviews live on Google; the site links customers to them. */
+  googleReviewUrl: 'https://maps.app.goo.gl/hDM9Pwpr78Trkx427',
+  googleProfileUrl: 'https://www.google.com/maps?cid=9296423630800181378',
+
   /* Website credit */
   credit: { name: 'RiseEdge Ventures', tagline: 'Websites • Business Automation • Branding', url: 'https://www.riseedgeventures.co.za' },
 
