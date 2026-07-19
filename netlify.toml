@@ -10,3 +10,71 @@
 
 [build.environment]
   NODE_VERSION = "20"
+
+# ---------------------------------------------------------------------------
+# Security headers
+# ---------------------------------------------------------------------------
+# The site previously sent only HSTS. These add the standard protections
+# (clickjacking, MIME sniffing, referrer leakage, feature access) plus a
+# Content-Security-Policy scoped to exactly what this site really loads:
+#   - scripts: its own files + Google Tag Manager (analytics)
+#   - styles:  styles.css / mobile.css plus the inline style attributes the
+#              prerendered markup uses throughout (hence 'unsafe-inline')
+#   - frames:  the Google Maps embed on the contact page
+# Verified against the live pages first — a stricter policy would have broken
+# the map embed and the inline styling.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; frame-src https://www.google.com https://maps.google.com; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.googletagmanager.com https://*.analytics.google.com"
+
+# ---------------------------------------------------------------------------
+# Canonical URL redirects
+# ---------------------------------------------------------------------------
+# Search Console reported "Alternative page with proper canonical tag" because
+# every page was reachable at more than one URL: /index.html as well as /, and
+# an extension-less form (/products) alongside /products.html. The canonical
+# tags were already correct, so nothing was mis-indexed — these redirects just
+# remove the duplicates at source so only one URL per page exists.
+# `force = true` is required, otherwise Netlify serves the matching file first
+# and the redirect never runs.
+[[redirects]]
+  from = "/index.html"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/products"
+  to = "/products.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/services"
+  to = "/services.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/gallery"
+  to = "/gallery.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/about"
+  to = "/about.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/contact"
+  to = "/contact.html"
+  status = 301
+  force = true

@@ -3,13 +3,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-WH87LWEPJB"></script>
+<!-- Google Analytics is CONSENT-GATED (POPIA/GDPR): nothing loads and no
+     tracking cookie is set until the visitor accepts. See /privacy.html -->
 <script>
-  window.dataLayer = window.dataLayer || [];
+(function(){
+  var ID='G-WH87LWEPJB';
+  window.dataLayer=window.dataLayer||[];
   function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-WH87LWEPJB');
+  window.gtag=gtag;
+  window.nbLoadAnalytics=function(){
+    if(window.__nbGA)return; window.__nbGA=true;
+    var s=document.createElement('script');
+    s.async=true; s.src='https://www.googletagmanager.com/gtag/js?id='+ID;
+    document.head.appendChild(s);
+    gtag('js',new Date());
+    gtag('config',ID,{anonymize_ip:true});
+  };
+  try{ if(localStorage.getItem('nb_consent')==='accepted') window.nbLoadAnalytics(); }catch(e){}
+})();
 </script>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -208,5 +219,28 @@
   <script src="app.compiled.js"></script>
   <script>(function(){var el=document.getElementById("root"),v=React.createElement(App);if(el.firstElementChild){ReactDOM.hydrateRoot(el,v);}else{ReactDOM.createRoot(el).render(v);}})();</script>
   <script src="reveal.js"></script>
+<!-- Cookie consent banner. Visibility is driven by style.display, never the
+     hidden attribute, because an author display rule silently overrides [hidden]. -->
+<div id="nb-cookie" role="dialog" aria-label="Cookie notice" style="display:none;position:fixed;left:0;right:0;bottom:0;z-index:9999;background:#fff;border-top:1px solid #e5e0da;box-shadow:0 -8px 30px rgba(0,0,0,.10);padding:16px 20px;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap;font-family:system-ui,-apple-system,'Segoe UI',sans-serif">
+  <p style="margin:0;max-width:640px;font-size:14px;line-height:1.55;color:#3d3733">We use essential cookies to run this site, and analytics cookies only if you agree, to understand how the site is used. Read our <a href="/privacy.html" style="color:#8C0C12;font-weight:600">Privacy &amp; Cookie Policy</a>.</p>
+  <span style="display:flex;gap:10px;flex-shrink:0">
+    <button type="button" id="nb-cookie-no" style="min-height:44px;padding:0 18px;border-radius:8px;border:1.5px solid #d9d2cb;background:#fff;color:#3d3733;font-size:14px;font-weight:600;cursor:pointer">Decline</button>
+    <button type="button" id="nb-cookie-yes" style="min-height:44px;padding:0 18px;border-radius:8px;border:0;background:#8C0C12;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Accept</button>
+  </span>
+</div>
+<script>
+(function(){
+  var el=document.getElementById('nb-cookie'); if(!el) return;
+  var stored=null; try{ stored=localStorage.getItem('nb_consent'); }catch(e){}
+  if(!stored) el.style.display='flex';
+  function decide(v){
+    try{ localStorage.setItem('nb_consent',v); }catch(e){}
+    el.style.display='none';
+    if(v==='accepted'&&window.nbLoadAnalytics) window.nbLoadAnalytics();
+  }
+  document.getElementById('nb-cookie-yes').addEventListener('click',function(){decide('accepted');});
+  document.getElementById('nb-cookie-no').addEventListener('click',function(){decide('declined');});
+})();
+</script>
 </body>
 </html>
