@@ -72,7 +72,7 @@ window.NB_CONFIG = {
   googleProfileUrl: 'https://maps.app.goo.gl/hDM9Pwpr78Trkx427',
 
   /* Website credit */
-  credit: { name: 'RiseEdge Ventures', tagline: 'Websites • Business Automation • Branding', url: 'https://www.riseedgeventures.co.za' },
+  credit: { name: 'RiseEdge Digital', tagline: 'Websites • Business Automation • Branding', url: 'https://digital.riseedgeventures.co.za' },
 
   /* Pre-filled WhatsApp message, product-aware. */
   waMessage: function (item) {
