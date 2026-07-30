@@ -30,6 +30,7 @@ const STATIC_SITEMAP = [
   { loc: SITE + '/paia.html', changefreq: 'yearly', priority: '0.3' },
   { loc: SITE + '/accessibility.html', changefreq: 'yearly', priority: '0.3' },
   { loc: SITE + '/privacy-request.html', changefreq: 'yearly', priority: '0.3' },
+  { loc: SITE + '/cancellation-refund.html', changefreq: 'yearly', priority: '0.4' },
 ];
 
 const APP_SCRIPTS = ['nb-app.js', 'config.js', 'catalogue.js', 'app.compiled.js'];

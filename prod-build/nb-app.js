@@ -389,7 +389,7 @@ function CatalogueCard({
     className: "nb-cat__priceline is-enquiry"
   }, /*#__PURE__*/React.createElement("b", null, "Price on enquiry")), numeric && /*#__PURE__*/React.createElement("p", {
     className: "nb-cat__price-note"
-  }, "Guide price \u2014 final quotation may vary. VAT status, garment, branding method, quantity and courier confirmed on quote."), description && /*#__PURE__*/React.createElement("p", {
+  }, "Guide price in ZAR \u2014 final quotation may vary. VAT charged only where legally applicable and shown on the quotation. Garment, branding, quantity and courier confirmed on quote."), description && /*#__PURE__*/React.createElement("p", {
     className: "nb-cat__desc"
   }, description), /*#__PURE__*/React.createElement("div", {
     className: "nb-cat__actions"

@@ -131,6 +131,12 @@
   force = true
 
 [[redirects]]
+  from = "/cancellation-refund"
+  to = "/cancellation-refund.html"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/home"
   to = "/"
   status = 301

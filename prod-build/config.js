@@ -63,10 +63,12 @@ window.NB_CONFIG = {
     legalNotices: null,
   },
 
-  /* POPIA / PAIA contacts — publish only verified values */
+  /* POPIA / PAIA contacts — do not invent a person's name */
   informationOfficer: {
+    /* Public role label only until a full name is explicitly approved */
     name: null,
-    email: null,
+    roleLabel: 'The Owner or authorised representative of Nosibele Design & Embroidery',
+    email: null, /* falls back to privacyEmail() → info@ */
     phone: null,
   },
   deputyInformationOfficer: {
@@ -74,11 +76,12 @@ window.NB_CONFIG = {
     email: null,
   },
 
-  /* Commercial / tax — null until owner confirms */
+  /* Commercial / tax — VAT number remains null until verified */
   vat: {
     registered: null,
     number: null,
     pricesIncludeVat: null,
+    publicWording: 'Prices are quoted in South African rand. VAT will only be charged where legally applicable and shown on the quotation.',
   },
 
   /* Policy metadata */
@@ -88,18 +91,21 @@ window.NB_CONFIG = {
     nextReviewDue: null,
   },
 
-  /* Order process facts — null means do not invent on public pages */
+  /* Order process — owner-approved temporary defaults (30 July 2026) */
   commercial: {
     quoteValidityDays: null,
-    depositPercent: null,
-    depositRequired: null,
+    depositPercent: 50,
+    depositRequired: true,
+    depositWording: 'A 50% deposit is required before production begins. The remaining balance is payable before collection or delivery.',
+    depositExceptionWording: 'Nosibele may require a higher deposit or full payment for urgent orders, special-order materials, unusually large orders or work carrying significant upfront costs.',
     productionStartsAfter: [
       'Approved quotation',
-      'Any agreed payment or deposit',
-      'Artwork approval (spelling, colours, placement, sizes)',
+      'Required deposit (normally 50%, or a higher amount / full payment when notified)',
+      'Artwork and order details confirmed (spelling, colours, placement, sizes)',
     ],
-    acceptedPaymentMethods: null,
-    typicalLeadTimeNote: 'Lead times depend on quantity, method and studio workload and are confirmed on each quotation.',
+    balanceBeforeRelease: true,
+    acceptedPaymentMethods: null, /* do not list unverified methods */
+    typicalLeadTimeNote: 'Lead times depend on quantity, method and studio workload and are confirmed on each quotation. Timing estimates are not guarantees.',
     courierAvailable: true,
     courierNationwideClaimVerified: false,
   },
@@ -171,4 +177,16 @@ window.NB_CONFIG = {
   complaintsEmail: function () {
     return this.emails.complaints || this.emails.info || this.emails.primary;
   },
+  ioPublicLabel: function () {
+    return (this.informationOfficer && this.informationOfficer.roleLabel) ||
+      'The Owner or authorised representative of Nosibele Design & Embroidery';
+  },
+  vatPublicWording: function () {
+    return (this.vat && this.vat.publicWording) ||
+      'Prices are quoted in South African rand. VAT will only be charged where legally applicable and shown on the quotation.';
+  },
+  depositPublicWording: function () {
+    return (this.commercial && this.commercial.depositWording) || '';
+  },
 };
+

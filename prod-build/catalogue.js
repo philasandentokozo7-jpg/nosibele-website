@@ -6,7 +6,7 @@ const A = 'assets/catalogue/';
 const X = '.webp';
 
 /* Shared pricing note — do not invent VAT or inclusions. */
-const PRICE_GUIDE_NOTE = 'Guide “from” price for quotation. Final price depends on garment, branding method, quantity, artwork, placement and timing. VAT status and courier costs are confirmed on your quotation.';
+const PRICE_GUIDE_NOTE = 'Guide “from” price in South African rand for quotation. Final price depends on garment, branding method, quantity, artwork, placement and timing. VAT will only be charged where legally applicable and shown on the quotation. Courier costs confirmed on quote.';
 
 const PRODUCTS = [
   { slug:'corporate-wear', group:'Corporate Wear', cat:'Corporate Wear', title:'Corporate wear', img:A+'corporate-wear'+X, price:null,

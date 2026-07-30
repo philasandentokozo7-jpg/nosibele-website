@@ -1343,7 +1343,7 @@ Object.assign(window, {
 /* ===== Craft.jsx ===== */
 /* Nosibele website — the craft / process band (dark feature section) */
 function Craft() {
-  const steps = [['01', 'Request a quotation', 'Share what you need — garment, quantity, artwork or inspiration — via the quote form, WhatsApp or email.'], ['02', 'Review & quotation', 'We review the request and send a tailored quotation. Timing for the reply depends on complexity; we aim to respond promptly.'], ['03', 'Approve quote & artwork', 'Production begins only after you approve the quotation, complete any agreed payment or deposit, and approve artwork (spelling, colours, placement and sizes).'], ['04', 'Production', 'Approved work is embroidered, printed or finished in our Durban studio according to the agreed specification.'], ['05', 'Quality check', 'Garments are checked for stitching, colour and finish before release.'], ['06', 'Collect or courier', 'Collect from the studio or arrange courier as agreed on your quotation. Lead times are confirmed per order.']];
+  const steps = [['01', 'Request a quotation', 'Share what you need — garment, quantity, artwork or inspiration — via the quote form, WhatsApp or email. This is a quotation request, not an accepted order.'], ['02', 'Review & quotation', 'We review the request and send a tailored quotation. Lead times are estimates confirmed on the quotation — not guarantees.'], ['03', 'Approve quote, deposit & artwork', 'Production begins only after you approve the quotation, pay the required deposit (normally 50%), and confirm artwork and order details (spelling, colours, placement and sizes).'], ['04', 'Production', 'Approved work is embroidered, printed or finished in our Durban studio according to the agreed specification.'], ['05', 'Quality check', 'Garments are checked for stitching, colour and finish before release.'], ['06', 'Balance, then collect or courier', 'The remaining balance is payable before collection or delivery. Collect from the studio or arrange courier as agreed on your quotation.']];
   return /*#__PURE__*/React.createElement("section", {
     id: "craft",
     style: {
@@ -1794,66 +1794,78 @@ function QuoteSection({
   const [fulfilment, setFulfilment] = React.useState('Collect from studio');
   const [sent, setSent] = React.useState(false);
   const [lead, setLead] = React.useState(null);
-  const [fileName, setFileName] = React.useState('');
   const [submitting, setSubmitting] = React.useState(false);
   const [error, setError] = React.useState('');
+  const lastSubmitAt = React.useRef(0);
+  const COOLDOWN_MS = 8000;
+  const MAX = { name: 80, phone: 40, qty: 12, notes: 1000, source: 80, item: 120 };
   React.useEffect(() => {
-    if (preselect) setItem(preselect.replace(/\s#\d+$/, ''));
+    if (preselect) setItem(preselect.replace(/\s#\d+$/, '').slice(0, MAX.item));
   }, [preselect]);
+  const clip = (v, n) => String(v == null ? '' : v).trim().slice(0, n);
   const submit = async e => {
     e.preventDefault();
+    if (submitting) return;
+    const now = Date.now();
+    if (now - (lastSubmitAt.current || 0) < COOLDOWN_MS) {
+      setError('Please wait a moment before sending again.');
+      return;
+    }
     const fd = new FormData(e.target);
     if ((fd.get('_gotcha') || '').toString().trim()) {
-      setLead({ name: fd.get('name') || '—', item: item || '—', qty: fd.get('qty') || '—', status: 'New' });
+      setLead({ name: '—', item: '—', qty: '—', status: 'New' });
       setSent(true);
       return;
     }
+    const name = clip(fd.get('name'), MAX.name);
+    const phone = clip(fd.get('phone'), MAX.phone);
+    const qty = clip(fd.get('qty'), MAX.qty);
+    const notes = clip(fd.get('notes'), MAX.notes);
+    const source = clip(fd.get('source'), MAX.source);
+    const product = clip(item, MAX.item);
+    if (!name) { setError('Please enter your name.'); return; }
+    if (!phone || phone.replace(/\D/g, '').length < 9) { setError('Please enter a valid WhatsApp number.'); return; }
+    if (!product) { setError('Please select a product or service.'); return; }
     if (!fd.get('privacy_ack')) {
-      setError('Please confirm you have read the Privacy Notice before sending.');
+      setError('Please confirm you have read the Privacy Notice and Quotation & Order Terms before sending.');
       return;
     }
-    const leadObj = {
-      name: fd.get('name') || '—',
-      item: item || '—',
-      qty: fd.get('qty') || '—',
-      status: 'New'
-    };
+    const leadObj = { name: name.split(' ')[0] || '—', item: product || '—', qty: qty || '—', status: 'New' };
     const endpoint = window.NB_CONFIG && window.NB_CONFIG.formEndpoint;
     if (!endpoint) {
-      setLead(leadObj);
-      setSent(true);
+      setError('The quotation form is temporarily unavailable. Please WhatsApp or email us instead.');
       return;
     }
     setSubmitting(true);
     setError('');
+    lastSubmitAt.current = now;
     try {
       const data = new FormData();
-      data.append('Name', fd.get('name') || '');
-      data.append('WhatsApp', fd.get('phone') || '');
-      data.append('Product / service', item || '');
-      data.append('Quantity', fd.get('qty') || '');
+      data.append('Name', name);
+      data.append('WhatsApp', phone);
+      data.append('Product / service', product);
+      data.append('Quantity', qty);
       data.append('Delivery or collection', fulfilment || '');
-      data.append('Notes', fd.get('notes') || '');
-      data.append('Lead source', fd.get('source') || '');
+      data.append('Notes', notes);
+      data.append('Lead source', source);
       data.append('Privacy acknowledgement', 'Yes');
+      data.append('Commercial terms acknowledgement', 'Yes');
       data.append('Marketing opt-in', fd.get('marketing_opt_in') ? 'Yes' : 'No');
-      data.append('_gotcha', fd.get('_gotcha') || '');
-      data.append('Artwork delivery', 'Customer will send artwork separately via WhatsApp or email (website upload disabled for security)');
-      data.append('_subject', 'New quote request — ' + (item || 'custom apparel'));
+      data.append('_gotcha', '');
+      data.append('Artwork delivery', 'Customer will send artwork separately via WhatsApp or email (website upload disabled)');
+      data.append('_subject', 'New quote request');
       const res = await fetch(endpoint, {
         method: 'POST',
         body: data,
-        headers: {
-          Accept: 'application/json'
-        }
+        headers: { Accept: 'application/json' }
       });
       if (!res.ok) throw new Error('bad response');
       setLead(leadObj);
       setSent(true);
-      try { if (typeof window.nbTrack === 'function') window.nbTrack('quote_submit', { item: item ? 'set' : 'unset' }); } catch (t) {}
+      try { if (typeof window.nbTrack === 'function') window.nbTrack('quote_submit', { item: product ? 'set' : 'unset' }); } catch (t) {}
     } catch (err) {
       try { if (typeof window.nbTrack === 'function') window.nbTrack('form_error', { form: 'quote' }); } catch (t) {}
-      setError('We couldn’t send your request just now. Please WhatsApp us on 061 445 3680, email quotes@nosibeleembroidery.co.za, or call us — and we will help you.');
+      setError('We could not send your request just now. Please try WhatsApp, email or telephone instead.');
     } finally {
       setSubmitting(false);
     }
@@ -1861,7 +1873,6 @@ function QuoteSection({
   const reset = () => {
     setSent(false);
     setItem('');
-    setFileName('');
     setLead(null);
     setError('');
     setFulfilment('Collect from studio');
@@ -2018,7 +2029,7 @@ function QuoteSection({
       margin: '10px 0 18px',
       lineHeight: 'var(--lh-normal)'
     }
-  }, "We\u2019ve received your quotation request. We will review it and reply with a tailored quotation. This is not yet an accepted order.")), /*#__PURE__*/React.createElement("div", {
+  }, "Your quotation request has been received. We will review it and reply with a tailored quotation. This is not an accepted order.")), /*#__PURE__*/React.createElement("div", {
     style: {
       background: 'var(--cream-100)',
       borderRadius: 'var(--radius-md)',
@@ -2105,6 +2116,8 @@ function QuoteSection({
   }, "Your name", /*#__PURE__*/React.createElement("i", null, "*")), /*#__PURE__*/React.createElement("input", {
     name: "name",
     required: true,
+    autoComplete: "name",
+    maxLength: 80,
     placeholder: "e.g. Thandi M."
   })), /*#__PURE__*/React.createElement("label", {
     className: "nbq-f"
@@ -2114,6 +2127,9 @@ function QuoteSection({
     name: "phone",
     type: "tel",
     required: true,
+    autoComplete: "tel",
+    inputMode: "tel",
+    maxLength: 40,
     placeholder: "082 000 0000"
   }))), /*#__PURE__*/React.createElement("div", {
     className: "nbq-grouphead",
@@ -2159,6 +2175,9 @@ function QuoteSection({
     name: "qty",
     type: "number",
     min: "1",
+    max: "999999",
+    maxLength: 12,
+    inputMode: "numeric",
     placeholder: "e.g. 25"
   })), /*#__PURE__*/React.createElement("div", {
     className: "nbq-f"
@@ -2212,7 +2231,8 @@ function QuoteSection({
   }, "Notes ", /*#__PURE__*/React.createElement("em", null, "(optional)")), /*#__PURE__*/React.createElement("textarea", {
     name: "notes",
     rows: "3",
-    placeholder: "Colours, sizes, deadline, or anything else we should know."
+    maxLength: 1000,
+    placeholder: "Colours, sizes, deadline, or anything else we should know. Please do not include ID numbers or card details."
   })), /*#__PURE__*/React.createElement("label", {
     className: "nbq-f",
     style: {
@@ -2281,7 +2301,7 @@ function QuoteSection({
       color: 'var(--crimson-600)',
       fontWeight: 700
     }
-  }, "Quotation & Order Terms"), ". I understand this is a quotation request only, and that production starts only after an approved quotation, any agreed payment or deposit, and artwork approval.")), /*#__PURE__*/React.createElement("label", {
+  }, "Quotation & Order Terms"), ". I understand this is a quotation request only. Production starts only after an approved quotation, the required deposit (normally 50%), and confirmed artwork/order details. The balance is payable before collection or delivery.")), /*#__PURE__*/React.createElement("label", {
     className: "nbq-check",
     style: {
       display: 'flex',
@@ -2701,6 +2721,13 @@ function Footer({
       textDecoration: 'none'
     }
   }, "Quotation & Order Terms"), /*#__PURE__*/React.createElement("a", {
+    href: "/cancellation-refund.html",
+    className: "nb-foot-link",
+    style: {
+      color: 'inherit',
+      textDecoration: 'none'
+    }
+  }, "Cancellation & Refunds"), /*#__PURE__*/React.createElement("a", {
     href: "/policies.html",
     className: "nb-foot-link",
     style: {
