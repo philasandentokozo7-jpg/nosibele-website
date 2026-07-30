@@ -1,8 +1,5 @@
 # Netlify configuration for the Nosibele website.
-# When this repo is connected to Netlify, every push to GitHub triggers:
-#   1. `npm install` + the prerender build (bakes all page content into the HTML for SEO)
-#   2. Deployment of the prod-build folder as the live site
-# You never need to run anything by hand.
+# Build: prerender SEO HTML into prod-build, then publish that folder.
 
 [build]
   command = "cd build-tools && npm install && node prerender.js"
@@ -14,35 +11,41 @@
 # ---------------------------------------------------------------------------
 # Security headers
 # ---------------------------------------------------------------------------
-# The site previously sent only HSTS. These add the standard protections
-# (clickjacking, MIME sniffing, referrer leakage, feature access) plus a
-# Content-Security-Policy scoped to exactly what this site really loads:
-#   - scripts: its own files + Google Tag Manager (analytics)
-#   - styles:  styles.css / mobile.css plus the inline style attributes the
-#              prerendered markup uses throughout (hence 'unsafe-inline')
-#   - frames:  the Google Maps embed on the contact page
-# Verified against the live pages first — a stricter policy would have broken
-# the map embed and the inline styling.
+# Enforcing CSP after inventory of required origins (self, Formspree, Google
+# Fonts/Analytics/Maps). HSTS without preload. frame-ancestors + XFO both set.
 [[headers]]
   for = "/*"
   [headers.values]
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains"
-    Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; frame-src https://www.google.com https://maps.google.com; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.googletagmanager.com https://*.analytics.google.com"
+    Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://formspree.io; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; frame-src https://www.google.com https://maps.google.com; connect-src 'self' https://formspree.io https://www.google-analytics.com https://*.google-analytics.com https://*.googletagmanager.com https://*.analytics.google.com; upgrade-insecure-requests"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, must-revalidate"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, must-revalidate"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 # ---------------------------------------------------------------------------
 # Canonical URL redirects
 # ---------------------------------------------------------------------------
-# Search Console reported "Alternative page with proper canonical tag" because
-# every page was reachable at more than one URL: /index.html as well as /, and
-# an extension-less form (/products) alongside /products.html. The canonical
-# tags were already correct, so nothing was mis-indexed — these redirects just
-# remove the duplicates at source so only one URL per page exists.
-# `force = true` is required, otherwise Netlify serves the matching file first
-# and the redirect never runs.
 [[redirects]]
   from = "/index.html"
   to = "/"
@@ -76,5 +79,71 @@
 [[redirects]]
   from = "/contact"
   to = "/contact.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/privacy"
+  to = "/privacy.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/cookies"
+  to = "/cookies.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/terms"
+  to = "/terms.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/commercial-terms"
+  to = "/commercial-terms.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/policies"
+  to = "/policies.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/paia"
+  to = "/paia.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/accessibility"
+  to = "/accessibility.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/privacy-request"
+  to = "/privacy-request.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/cancellation-refund"
+  to = "/cancellation-refund.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/home"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/home.html"
+  to = "/"
   status = 301
   force = true

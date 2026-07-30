@@ -20,6 +20,19 @@ const PAGES = [
   { file: 'contact.html',  component: 'ContactPage',  loc: SITE + '/contact.html',  changefreq: 'monthly', priority: '0.9' },
 ];
 
+/* Static legal pages (not React-prerendered) — still listed in the sitemap. */
+const STATIC_SITEMAP = [
+  { loc: SITE + '/privacy.html', changefreq: 'yearly', priority: '0.4' },
+  { loc: SITE + '/cookies.html', changefreq: 'yearly', priority: '0.3' },
+  { loc: SITE + '/terms.html',   changefreq: 'yearly', priority: '0.4' },
+  { loc: SITE + '/commercial-terms.html', changefreq: 'yearly', priority: '0.5' },
+  { loc: SITE + '/policies.html', changefreq: 'yearly', priority: '0.4' },
+  { loc: SITE + '/paia.html', changefreq: 'yearly', priority: '0.3' },
+  { loc: SITE + '/accessibility.html', changefreq: 'yearly', priority: '0.3' },
+  { loc: SITE + '/privacy-request.html', changefreq: 'yearly', priority: '0.3' },
+  { loc: SITE + '/cancellation-refund.html', changefreq: 'yearly', priority: '0.4' },
+];
+
 const APP_SCRIPTS = ['nb-app.js', 'config.js', 'catalogue.js', 'app.compiled.js'];
 
 function xmlEscape(s) {
@@ -166,7 +179,9 @@ function writeSitemap(pageImages) {
       .map((i) => `    <image:image><image:loc>${xmlEscape(i.loc)}</image:loc><image:title>${xmlEscape(i.title)}</image:title></image:image>`)
       .join('\n');
     return `  <url>\n    <loc>${p.loc}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${p.changefreq}</changefreq>\n    <priority>${p.priority}</priority>\n${imgs}\n  </url>`;
-  }).join('\n');
+  }).concat(STATIC_SITEMAP.map((p) => (
+    `  <url>\n    <loc>${p.loc}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${p.changefreq}</changefreq>\n    <priority>${p.priority}</priority>\n  </url>`
+  ))).join('\n');
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${urls}\n</urlset>\n`;
   fs.writeFileSync(path.join(PB, 'sitemap.xml'), xml);
 }
