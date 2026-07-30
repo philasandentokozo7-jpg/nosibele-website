@@ -291,7 +291,7 @@ function ensureStyles() {
   }
   .nb-cat__price-chip small { font-family: var(--font-body); font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
     letter-spacing: 0.1em; color: var(--gold-700); margin-right: 5px; }
-  .nb-cat__priceline { display: flex; align-items: baseline; gap: 7px; margin: 2px 0 0; }
+  .nb-cat__price-note{margin:6px 0 0;font-size:11px;line-height:1.35;color:var(--text-muted)}.nb-cat__priceline { display: flex; align-items: baseline; gap: 7px; margin: 2px 0 0; }
   .nb-cat__priceline b { font-family: var(--font-display); font-weight: 700; font-size: 1.7rem; color: var(--crimson-500); line-height: 1; }
   .nb-cat__priceline small { font-family: var(--font-body); font-size: 0.66rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold-700); }
   .nb-cat__priceline.is-enquiry b { font-size: 1.05rem; color: var(--burgundy-500); }
@@ -344,10 +344,21 @@ function CatalogueCard({
 }) {
   ensureStyles();
   const requestLabel = kind === 'service' ? 'Request this service' : 'Request a quote';
-  const waMsg = whatsappMessage || (window.NB_CONFIG ? window.NB_CONFIG.waMessage(title) : `Hello Nosibele Design & Embroidery,\n\nI would like a quotation for the ${title}.`);
+  const C = window.NB_CONFIG || {};
+  const waMsg = whatsappMessage || (C.waMessage ? C.waMessage(title) : `Hello Nosibele Design & Embroidery, I would like a quotation for the ${title}.`);
   const numeric = price && /^[Rr]?\s?\d/.test(String(price));
-  const waDigits = String(whatsappPhone).replace(/[^0-9]/g, '').replace(/^0/, '27');
-  const waHref = `https://wa.me/${waDigits}?text=${encodeURIComponent(waMsg)}`;
+  const priceDisplay = numeric
+    ? (String(price).replace(/^\s*[Rr]\s*/, 'R').replace(/^R(?=\d)/, 'R'))
+    : price;
+  const priceLabelText = (priceLabel || 'From') + (numeric ? ' ' : '');
+  const waHref = typeof C.waLink === 'function'
+    ? C.waLink(waMsg)
+    : (() => {
+        let d = String(whatsappPhone || C.whatsapp || C.whatsappDigits || '0614453680').replace(/[^0-9]/g, '');
+        if (d.charAt(0) === '0') d = '27' + d.slice(1);
+        if (!d) d = '27614453680';
+        return 'https://wa.me/' + d + '?text=' + encodeURIComponent(waMsg);
+      })();
   return /*#__PURE__*/React.createElement("article", _extends({
     className: ['nb-cat', className].filter(Boolean).join(' ')
   }, rest), /*#__PURE__*/React.createElement("div", {
@@ -363,7 +374,7 @@ function CatalogueCard({
     size: "sm"
   }, badge)), numeric && /*#__PURE__*/React.createElement("span", {
     className: "nb-cat__price-chip"
-  }, /*#__PURE__*/React.createElement("small", null, priceLabel), price)), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("small", null, priceLabelText), priceDisplay)), /*#__PURE__*/React.createElement("div", {
     className: "nb-cat__body"
   }, eyebrow && /*#__PURE__*/React.createElement("span", {
     className: "nb-cat__eyebrow"
@@ -374,9 +385,11 @@ function CatalogueCard({
     "aria-hidden": "true"
   }), numeric ? /*#__PURE__*/React.createElement("div", {
     className: "nb-cat__priceline"
-  }, /*#__PURE__*/React.createElement("small", null, priceLabel), /*#__PURE__*/React.createElement("b", null, price)) : /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("small", null, priceLabelText), /*#__PURE__*/React.createElement("b", null, priceDisplay)) : /*#__PURE__*/React.createElement("div", {
     className: "nb-cat__priceline is-enquiry"
-  }, /*#__PURE__*/React.createElement("b", null, "Price on enquiry")), description && /*#__PURE__*/React.createElement("p", {
+  }, /*#__PURE__*/React.createElement("b", null, "Price on enquiry")), numeric && /*#__PURE__*/React.createElement("p", {
+    className: "nb-cat__price-note"
+  }, "Guide price \u2014 final quotation may vary. VAT status, garment, branding method, quantity and courier confirmed on quote."), description && /*#__PURE__*/React.createElement("p", {
     className: "nb-cat__desc"
   }, description), /*#__PURE__*/React.createElement("div", {
     className: "nb-cat__actions"
@@ -391,7 +404,8 @@ function CatalogueCard({
     className: "nb-cat__wa",
     href: waHref,
     target: "_blank",
-    rel: "noopener noreferrer"
+    rel: "noopener noreferrer",
+    "aria-label": "Chat with Nosibele Design & Embroidery on WhatsApp"
   }, WA_GLYPH, "WhatsApp enquiry"))));
 }
 Object.assign(__ds_scope, { CatalogueCard });
@@ -535,17 +549,29 @@ function WhatsAppButton({
   ...rest
 }) {
   ensureStyles();
-  // wa.me needs full international digits with no leading zero.
-  // Normalize a SA local number (leading 0) to country code 27.
-  const digits = String(phone).replace(/[^0-9]/g, '').replace(/^0/, '27');
-  const link = href || `https://wa.me/${digits}${message ? `?text=${encodeURIComponent(message)}` : ''}`;
+  const C = window.NB_CONFIG || {};
+  const fallbackMsg = C.waMessages && C.waMessages.general || 'Hello Nosibele Design & Embroidery, I would like to enquire about your services.';
+  const text = message || fallbackMsg;
+  // Prefer central config so an empty phone prop can never become a share URL (wa.me/?text=).
+  let link = href;
+  if (!link) {
+    if (typeof C.waLink === 'function') {
+      link = C.waLink(text);
+    } else {
+      let digits = String(phone || C.whatsapp || C.whatsappDigits || '0614453680').replace(/[^0-9]/g, '');
+      if (digits.charAt(0) === '0') digits = '27' + digits.slice(1);
+      if (!digits) digits = '27614453680';
+      link = 'https://wa.me/' + digits + '?text=' + encodeURIComponent(text);
+    }
+  }
   const cls = ['nb-wa', `nb-wa--${variant}`, floating ? 'nb-wa--floating' : '', className].filter(Boolean).join(' ');
   return /*#__PURE__*/React.createElement("a", _extends({
     className: cls,
     href: link,
     target: "_blank",
     rel: "noopener noreferrer",
-    "aria-label": "Chat with Nosibele on WhatsApp"
+    "aria-label": "Chat with Nosibele Design & Embroidery on WhatsApp",
+    title: "Chat with Nosibele Design & Embroidery on WhatsApp"
   }, rest), /*#__PURE__*/React.createElement(Glyph, null), children && /*#__PURE__*/React.createElement("span", null, children));
 }
 Object.assign(__ds_scope, { WhatsAppButton });
@@ -999,7 +1025,7 @@ function Hero({
       flexWrap: 'wrap'
     },
     className: "nb-hero-stats"
-  }, [['Est. 2024', 'Durban studio'], ['1000+', 'Garments finished'], ['7–10 days', 'Typical turnaround']].map(([n, l]) => /*#__PURE__*/React.createElement("div", {
+  }, [['Est. 2024', 'Durban studio'], ['Made to order', 'Quote-based production'], ['Typical lead time', 'Confirmed on quotation']].map(([n, l]) => /*#__PURE__*/React.createElement("div", {
     key: l
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -1077,7 +1103,7 @@ function Hero({
       fontSize: 12,
       color: 'var(--text-muted)'
     }
-  }, "Every stitch checked by hand"))), /*#__PURE__*/React.createElement("div", {
+  }, "Checked before it leaves the studio"))), /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'absolute',
       top: 18,
@@ -1394,7 +1420,7 @@ const NB_SVC_FEATURE = [{
   img: NB_ASSETS + 'services/cards/sublimation.png',
   alt: "Sublimation printing — dye infused edge-to-edge into golf shirts and supporters’ wear",
   lead: 'Colour woven into the cloth',
-  desc: 'Dye is infused edge-to-edge into the fabric, so designs never crack, peel or fade — ideal for golf shirts, dresses and supporters’ wear.'
+  desc: 'Dye is infused edge-to-edge into the fabric, so designs have a durable full-colour finish when cared for as advised — ideal for golf shirts, dresses and supporters’ wear.'
 }, {
   title: 'Corporate Branding',
   img: NB_ASSETS + 'services/cards/corporate.png',
@@ -3365,7 +3391,7 @@ function AboutPage() {
       marginTop: 30,
       flexWrap: 'wrap'
     }
-  }, [['Est. 2024', 'Durban studio'], ['1000+', 'Garments finished'], ['7–10 days', 'Typical turnaround']].map(([n, l]) => /*#__PURE__*/React.createElement("div", {
+  }, [['Est. 2024', 'Durban studio'], ['Made to order', 'Quote-based production'], ['Typical lead time', 'Confirmed on quotation']].map(([n, l]) => /*#__PURE__*/React.createElement("div", {
     key: l
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -3984,7 +4010,7 @@ const PRODUCTS = [{
   title: 'Sublimation shirts',
   img: A + 'sublimation-shirts' + X,
   price: 'R300',
-  desc: 'Edge-to-edge dye-sublimated short-sleeve shirts that never crack or fade — front and back.'
+  desc: 'Edge-to-edge dye-sublimated short-sleeve shirts that have a durable colour finish when cared for as advised — front and back.'
 }, {
   slug: 'traditional-golf',
   group: 'Traditional Wear',
@@ -4067,7 +4093,7 @@ const SERVICES = [{
   slug: 'sublimation-printing',
   title: 'Sublimation Printing',
   img: A + 'sublimation-shirts.jpg',
-  desc: 'Edge-to-edge dye prints for shirts, dresses and supporters’ wear that never crack or fade.'
+  desc: 'Edge-to-edge dye prints for shirts, dresses and supporters’ wear that have a durable colour finish when cared for as advised.'
 }, {
   slug: 'logo-name-branding',
   title: 'Logo & Name Branding',
@@ -4124,7 +4150,7 @@ const FAQS = [{
   a: 'Embroidery is premium thread branding for logos and names. Sublimation prints edge-to-edge colour into the fabric. DTF transfers crisp, detailed full-colour designs onto a garment. Not sure? We’ll advise the best fit.'
 }, {
   q: 'Where are you based and do you deliver?',
-  a: 'Our studio is in Durban (Shop 55, Charlotte Maxeke Street, Dominion Arcade). Collect from us, or we courier nationwide across South Africa.'
+  a: 'Our studio is in Durban (Shop 55, Charlotte Maxeke Street, Dominion Arcade). Collect from us, or we ask about courier options when we quote.'
 }];
 window.NB_CATALOGUE = {
   PRODUCTS,
@@ -4385,7 +4411,7 @@ function AboutPage() {
       marginTop: 30,
       flexWrap: 'wrap'
     }
-  }, [['Est. 2024', 'Durban studio'], ['1000+', 'Garments finished'], ['7–10 days', 'Typical turnaround']].map(([n, l]) => /*#__PURE__*/React.createElement("div", {
+  }, [['Est. 2024', 'Durban studio'], ['Made to order', 'Quote-based production'], ['Typical lead time', 'Confirmed on quotation']].map(([n, l]) => /*#__PURE__*/React.createElement("div", {
     key: l
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -5701,7 +5727,7 @@ function Hero({
       flexWrap: 'wrap'
     },
     className: "nb-hero-stats"
-  }, [['Est. 2024', 'Durban studio'], ['1000+', 'Garments finished'], ['7–10 days', 'Typical turnaround']].map(([n, l]) => /*#__PURE__*/React.createElement("div", {
+  }, [['Est. 2024', 'Durban studio'], ['Made to order', 'Quote-based production'], ['Typical lead time', 'Confirmed on quotation']].map(([n, l]) => /*#__PURE__*/React.createElement("div", {
     key: l
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -5779,7 +5805,7 @@ function Hero({
       fontSize: 12,
       color: 'var(--text-muted)'
     }
-  }, "Every stitch checked by hand"))), /*#__PURE__*/React.createElement("div", {
+  }, "Checked before it leaves the studio"))), /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'absolute',
       top: 18,
@@ -6902,7 +6928,7 @@ const NB_SVC_FEATURE = [{
   img: NB_ASSETS + 'services/cards/sublimation.png',
   alt: "Sublimation printing — dye infused edge-to-edge into golf shirts and supporters’ wear",
   lead: 'Colour woven into the cloth',
-  desc: 'Dye is infused edge-to-edge into the fabric, so designs never crack, peel or fade — ideal for golf shirts, dresses and supporters’ wear.'
+  desc: 'Dye is infused edge-to-edge into the fabric, so designs have a durable full-colour finish when cared for as advised — ideal for golf shirts, dresses and supporters’ wear.'
 }, {
   title: 'Corporate Branding',
   img: NB_ASSETS + 'services/cards/corporate.png',
@@ -7766,7 +7792,7 @@ const PRODUCTS = [{
   title: 'Sublimation shirts',
   img: A + 'sublimation-shirts' + X,
   price: 'R300',
-  desc: 'Edge-to-edge dye-sublimated short-sleeve shirts that never crack or fade — front and back.'
+  desc: 'Edge-to-edge dye-sublimated short-sleeve shirts that have a durable colour finish when cared for as advised — front and back.'
 }, {
   slug: 'traditional-golf',
   group: 'Traditional Wear',
@@ -7849,7 +7875,7 @@ const SERVICES = [{
   slug: 'sublimation-printing',
   title: 'Sublimation Printing',
   img: A + 'sublimation-shirts.jpg',
-  desc: 'Edge-to-edge dye prints for shirts, dresses and supporters’ wear that never crack or fade.'
+  desc: 'Edge-to-edge dye prints for shirts, dresses and supporters’ wear that have a durable colour finish when cared for as advised.'
 }, {
   slug: 'logo-name-branding',
   title: 'Logo & Name Branding',
@@ -7906,7 +7932,7 @@ const FAQS = [{
   a: 'Embroidery is premium thread branding for logos and names. Sublimation prints edge-to-edge colour into the fabric. DTF transfers crisp, detailed full-colour designs onto a garment. Not sure? We’ll advise the best fit.'
 }, {
   q: 'Where are you based and do you deliver?',
-  a: 'Our studio is in Durban (Shop 55, Charlotte Maxeke Street, Dominion Arcade). Collect from us, or we courier nationwide across South Africa.'
+  a: 'Our studio is in Durban (Shop 55, Charlotte Maxeke Street, Dominion Arcade). Collect from us, or we ask about courier options when we quote.'
 }];
 window.NB_CATALOGUE = {
   PRODUCTS,

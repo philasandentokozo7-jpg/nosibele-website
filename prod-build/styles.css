@@ -8,3 +8,25 @@
 @import url('./tokens/typography.css');
 @import url('./tokens/spacing.css');
 @import url('./tokens/effects.css');
+
+
+/* NB a11y focus */
+:focus{outline:none}
+:focus-visible{
+  outline:2px solid var(--gold-600, #C8A14A);
+  outline-offset:3px;
+}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{
+  outline:2px solid var(--gold-600, #C8A14A);
+  outline-offset:3px;
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:0.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:0.01ms !important;
+    scroll-behavior:auto !important;
+  }
+}
+.nb-cat__price-note{margin:6px 0 0;font-size:11px;line-height:1.35;color:var(--text-muted)}
+.nb-cat__priceline small{margin-right:0.25em}

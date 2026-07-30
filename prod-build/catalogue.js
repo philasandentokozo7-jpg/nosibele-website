@@ -1,56 +1,77 @@
 /* Nosibele catalogue — real Canva catalogue imagery.
-   Prices intentionally "Price on enquiry" until the studio confirms rates.
+   Guide prices shown where the studio has published a starting amount.
+   All priced items are made-to-order / quotation-based unless stock is confirmed.
    Each item carries a descriptive `alt` for image SEO/accessibility. */
 const A = 'assets/catalogue/';
 const X = '.webp';
+
+/* Shared pricing note — do not invent VAT or inclusions. */
+const PRICE_GUIDE_NOTE = 'Guide “from” price for quotation. Final price depends on garment, branding method, quantity, artwork, placement and timing. VAT status and courier costs are confirmed on your quotation.';
+
 const PRODUCTS = [
   { slug:'corporate-wear', group:'Corporate Wear', cat:'Corporate Wear', title:'Corporate wear', img:A+'corporate-wear'+X, price:null,
-    desc:'Branded shirts, golf shirts and team tees with your logo and lettering, finished for a sharp professional look.', badge:'Popular',
+    availability:'made_to_order', quote:'direct', supply:'business_or_customer',
+    desc:'Branded shirts, golf shirts and team tees with your logo and lettering, finished for a sharp professional look. Price on enquiry — made to order from quotation.', badge:'Popular',
     alt:'Embroidered corporate work shirts with full-colour company logos by Nosibele Design & Embroidery, Durban' },
   { slug:'bhinca-tshirt', group:'Traditional Wear', cat:'Bhinca Wear', title:'Bhinca t-shirts', img:A+'bhinca-tshirt'+X, price:'R300',
-    desc:'Statement Bhinca-style cow-print golf shirts — ezama Bhinca, made in Durban.', badge:'New',
+    availability:'made_to_order', quote:'direct', supply:'business_supplied',
+    desc:'Statement Bhinca-style cow-print golf shirts — ezama Bhinca, made in Durban. Guide from R300; confirm garment and branding on quotation.', badge:'New',
     alt:'Bhinca cow-print golf shirt with black collar by Nosibele Design & Embroidery, Durban' },
   { slug:'isisholi', group:'Traditional Wear', cat:'Isisholi', title:'Isisholi (embroidered shawls)', img:A+'isisholi'+X, price:'R420',
-    desc:'Embroidered traditional shawls with names, messages and beadwork detail — made for umembeso, weddings and special days.', badge:'New',
+    availability:'made_to_order', quote:'direct', supply:'business_supplied',
+    desc:'Embroidered traditional shawls with names, messages and beadwork detail — made for umembeso, weddings and special days. Guide from R420.', badge:'New',
     alt:'White isisholi traditional shawl embroidered with names and blue flower detail' },
   { slug:'school-shirts', group:'School & Outerwear', cat:'School Uniforms', title:'School shirts & sports kits', img:A+'school-shirts'+X, price:null,
-    desc:'Embroidered school shirts, sports kits and uniforms — crests, names and numbers for schools across Durban.', badge:'New',
+    availability:'made_to_order', quote:'direct', supply:'business_or_customer',
+    desc:'Embroidered school shirts, sports kits and uniforms — crests, names and numbers for schools. Price on enquiry; minimum quantities confirmed on quotation.', badge:'New',
     alt:'Yellow and green Sifiso Primary School sports kit with embroidered school crest' },
   { slug:'custom-apparel', group:'Sportswear', cat:'Custom Apparel', title:'Custom sportswear', img:A+'custom-apparel'+X, price:'R100',
-    desc:'Personalised jerseys and kit with embroidered names and DTF sticker numbers.',
+    availability:'made_to_order', quote:'direct', supply:'business_or_customer',
+    desc:'Personalised jerseys and kit with embroidered names and DTF sticker numbers. Guide from R100 depending on branding scope — confirm on quotation.',
     alt:'Custom sports jerseys personalised with embroidered names and DTF printed numbers' },
   { slug:'sublimation-shirts', group:'Sportswear', cat:'Sublimation Shirts', title:'Sublimation shirts', img:A+'sublimation-shirts'+X, price:'R300',
-    desc:'Edge-to-edge dye-sublimated short-sleeve shirts that never crack or fade — front and back.',
+    availability:'made_to_order', quote:'direct', supply:'business_supplied',
+    desc:'Edge-to-edge dye-sublimated short-sleeve shirts with a durable full-colour finish when cared for as advised — front and back. Guide from R300.',
     alt:'Edge-to-edge dye-sublimation printed short-sleeve shirts, front and back full colour' },
   { slug:'dtf-shirts', group:'Traditional Wear', cat:'DTF Printing', title:'DTF printing', img:A+'dtf-shirts'+X, price:'R40',
-    desc:'Crisp full-colour direct-to-film prints on shirts, bags and packaging — A5 prints R40, A4 prints R80. Bring your artwork or we design it.',
+    availability:'made_to_order', quote:'direct', supply:'business_or_customer',
+    desc:'Crisp full-colour direct-to-film prints on shirts, bags and packaging — guide A5 prints from R40, A4 from R80. Bring your artwork or we can design it. Final quote confirms size, garment and quantity.',
     alt:'DTF printed branded gift bags and full-colour transfer sheets by Nosibele Design & Embroidery' },
   { slug:'school-jackets', group:'School & Outerwear', cat:'School Jackets', title:'School sublimation jackets', img:A+'school-jackets'+X, price:'R600',
-    desc:'Durable sublimation jackets with names and branding — from R600 on our stock jacket, R650 if you bring your own.',
+    availability:'made_to_order', quote:'direct', supply:'business_or_customer',
+    desc:'Sublimation jackets with names and branding — guide from R600 on our stock jacket, or from R650 if you bring your own jacket. Final quotation confirms sizes and artwork.',
     alt:'School sublimation jackets printed with learner names and school branding' },
   { slug:'jackets', group:'School & Outerwear', cat:'Jackets', title:'Custom jackets', img:A+'jackets'+X, price:null,
-    desc:'Premium custom jackets — bombers, softshells and statement pieces with embroidered crests.',
-    alt:'Premium custom bomber and softshell jackets with embroidered crests' },
+    availability:'made_to_order', quote:'direct', supply:'business_or_customer',
+    desc:'Custom jackets — bombers, softshells and statement pieces with embroidered crests. Price on enquiry.',
+    alt:'Custom bomber and softshell jackets with embroidered crests' },
   { slug:'workwear', group:'Workwear', cat:'Workwear', title:'Branded workwear', img:A+'workwear'+X, price:'R100',
-    desc:'Hard-wearing workwear with large back embroidery — priced from R100 for large-size back branding.',
+    availability:'made_to_order', quote:'direct', supply:'business_or_customer',
+    desc:'Hard-wearing workwear with large back embroidery — guide from R100 for large-size back branding. Garment cost and positions confirmed on quotation.',
     alt:'Hard-wearing branded workwear with large embroidered back logos' },
   { slug:'beanies', group:'Accessories', cat:'Beanies', title:'Embroidered beanies', img:A+'beanies'+X, price:null,
-    desc:'Warm knit beanies with raised embroidered names, logos and lettering.',
+    availability:'made_to_order', quote:'direct', supply:'business_supplied',
+    desc:'Warm knit beanies with raised embroidered names, logos and lettering. Price on enquiry.',
     alt:'Warm knit beanies with raised embroidered names, logos and lettering' },
   { slug:'scarves', group:'Accessories', cat:'Scarves', title:'Embroidered scarves', img:A+'scarves'+X, price:'R80',
-    desc:'Soft scarves embroidered with names and motifs — a personal, giftable touch.', badge:'Gifting',
+    availability:'made_to_order', quote:'direct', supply:'business_supplied',
+    desc:'Soft scarves embroidered with names and motifs — a personal, giftable touch. Guide from R80.', badge:'Gifting',
     alt:'Soft scarves embroidered with personalised names and decorative motifs' },
   { slug:'fur-wrap', group:'Traditional Wear', cat:'Fur Wraps', title:'Embroidered fur wraps', img:A+'fur-wrap'+X, price:'R350',
-    desc:'Soft faux-fur shoulder wraps embroidered with your clan name or message — R350 with embroidery.',
+    availability:'made_to_order', quote:'direct', supply:'business_supplied',
+    desc:'Soft faux-fur shoulder wraps embroidered with your clan name or message — guide R350 with embroidery.',
     alt:'White faux-fur shoulder wrap embroidered with a clan name in orange thread' },
   { slug:'embroidered-bags', group:'Accessories', cat:'Bags', title:'Embroidered bags', img:A+'embroidered-bags'+X, price:'R140',
-    desc:'Lunch, cooler and lady’s bags embroidered with logos or names — plain R140, with logo from R160. Lady’s bag R260, large bag with a name R300, large + lunch set R450.', badge:'New',
+    availability:'made_to_order', quote:'direct', supply:'business_supplied',
+    desc:'Lunch, cooler and lady’s bags embroidered with logos or names — guide plain from R140, with logo from R160. Lady’s bag from R260, large bag with a name from R300, large + lunch set from R450. Confirm options on quotation.', badge:'New',
     alt:'Red cooler bag embroidered with a church logo and personal name by Nosibele' },
   { slug:'traditional-golf', group:'Traditional Wear', cat:'Traditional Golf Shirts', title:'Traditional pattern golf shirts', img:A+'traditional-golf'+X, price:'R300',
-    desc:'Full-colour sublimated short-sleeve shirts with rhinestone or embroidered names.', badge:'Bestseller',
+    availability:'made_to_order', quote:'direct', supply:'business_supplied',
+    desc:'Full-colour sublimated short-sleeve shirts with rhinestone or embroidered names. Guide from R300.', badge:'Bestseller',
     alt:'Traditional African pattern golf shirts, full-colour sublimated with embroidered names' },
   { slug:'sublimation-dresses', group:'Traditional Wear', cat:'Sublimation Dresses', title:'Sublimation dresses', img:A+'sublimation-dresses'+X, price:null,
-    desc:'Made-to-fit event and supporters’ dresses printed in vivid, lasting colour.',
+    availability:'made_to_order', quote:'direct', supply:'business_supplied',
+    desc:'Made-to-fit event and supporters’ dresses printed in full colour. Price on enquiry; sizing and artwork confirmed before production.',
     alt:'Made-to-fit sublimation printed event and supporters’ dresses in vivid colour' },
 ];
 
@@ -77,13 +98,13 @@ const PRODUCT_GROUPS = ['Corporate Wear', 'Sportswear', 'Traditional Wear', 'Sch
 
 const SERVICES = [
   { slug:'embroidery', title:'Embroidery', img:A+'custom-apparel.jpg',
-    desc:'Premium thread-level branding for names, logos and numbers — our signature craft.',
-    alt:'Premium machine embroidery of logos, names and numbers on garments' },
+    desc:'Thread-level branding for names, logos and numbers — our signature craft.',
+    alt:'Machine embroidery of logos, names and numbers on garments' },
   { slug:'dtf-printing', title:'DTF Printing', img:A+'dtf-shirts.jpg',
-    desc:'Vivid full-colour transfers for detailed logos and photographic artwork on any garment.',
-    alt:'DTF printing — vivid full-colour transfers applied to garments' },
+    desc:'Full-colour transfers for detailed logos and photographic artwork on many garment types.',
+    alt:'DTF printing — full-colour transfers applied to garments' },
   { slug:'sublimation-printing', title:'Sublimation Printing', img:A+'sublimation-shirts.jpg',
-    desc:'Edge-to-edge dye prints for shirts, dresses and supporters’ wear that never crack or fade.',
+    desc:'Edge-to-edge dye prints for shirts, dresses and supporters’ wear with a durable colour finish when cared for as advised.',
     alt:'Edge-to-edge sublimation printing on shirts, dresses and supporters’ wear' },
   { slug:'logo-name-branding', title:'Logo & Name Branding', img:A+'scarves.jpg',
     desc:'Add names, numbers and logos to garments, gifts and accessories.',
@@ -92,32 +113,34 @@ const SERVICES = [
     desc:'We design and digitise your artwork, ready for print or embroidery.',
     alt:'Artwork design and digitising service for print and embroidery' },
   { slug:'corporate-branding', title:'Corporate Branding', img:A+'corporate-wear.jpg',
-    desc:'Full uniform and apparel branding programmes for businesses and teams.',
+    desc:'Uniform and apparel branding programmes for businesses and teams.',
     alt:'Corporate uniform and apparel branding for businesses and teams' },
   { slug:'school-uniform-branding', title:'School Uniform Branding', img:A+'school-jackets.jpg',
     desc:'Badges, names and crests applied to school and club uniforms in bulk.',
     alt:'School uniform branding — badges, names and crests applied in bulk' },
   { slug:'bulk-orders', title:'Bulk Orders', img:A+'beanies.jpg',
-    desc:'Reliable large-run production for events, teams and organisations.',
+    desc:'Large-run production for events, teams and organisations — timing and pricing confirmed on quotation.',
     alt:'Bulk apparel branding and large-run production for events and teams' },
 ];
 
 /* ---- Customer reviews (REAL only — add new ones here) ----
-   Add an object per review: { name, org, rating (1–5), text, source }.
-   Leave the array honest; do not invent reviews. */
+   Add an object per review: { name, org, rating (1–5), text, source, permissionConfirmed }.
+   Leave the array honest; do not invent reviews.
+   permissionConfirmed must be true only after the owner confirms customer permission. */
 const REVIEWS = [
   { name: 'Ayanda', org: 'AOL Accounting Academy SA', rating: 5, source: 'Customer',
+    permissionConfirmed: false,
     text: 'Nosibele embroidered uniforms for our whole team. The detail is immaculate and people keep asking where we had them made. Worth every rand.' },
 ];
 
 /* ---- Frequently asked questions (shared across pages) ---- */
 const FAQS = [
-  { q: 'How do I get a quote?', a: 'Fill in the quote form or message us on WhatsApp with what you’d like, roughly how many pieces, and your logo or artwork. We’ll reply with a tailored quote, usually within a day.' },
-  { q: 'What’s your turnaround time?', a: 'Most orders are ready in 7–10 working days once the design is approved. Larger or more complex orders may take a little longer — we’ll always confirm upfront.' },
-  { q: 'Do you handle bulk and corporate orders?', a: 'Yes. Uniforms, workwear, team kit and corporate branding are a big part of what we do. Bulk pricing depends on garment, quantity and branding method.' },
-  { q: 'Can you work from my own logo or artwork?', a: 'Absolutely. Send us a PNG, JPG or PDF and we’ll digitise it for embroidery or prepare it for print. We can also design artwork from scratch.' },
-  { q: 'Embroidery, sublimation or DTF — which do I need?', a: 'Embroidery is premium thread branding for logos and names. Sublimation prints edge-to-edge colour into the fabric. DTF transfers crisp, detailed full-colour designs onto a garment. Not sure? We’ll advise the best fit.' },
-  { q: 'Where are you based and do you deliver?', a: 'Our studio is in Durban (Shop 55, Charlotte Maxeke Street, Dominion Arcade). Collect from us, or we courier nationwide across South Africa.' },
+  { q: 'How do I get a quote?', a: 'Fill in the quote form or message us on WhatsApp with what you’d like, roughly how many pieces, and your logo or artwork. We’ll reply with a tailored quotation after reviewing your requirements. Submitting a form is a request for a quotation, not an accepted order.' },
+  { q: 'What’s your turnaround time?', a: 'Lead times depend on quantity, branding method and current studio workload. Timing is discussed with you and confirmed on your quotation after artwork approval.' },
+  { q: 'Do you handle bulk and corporate orders?', a: 'Yes. Uniforms, workwear, team kit and corporate branding are a core part of what we do. Bulk pricing depends on garment, quantity and branding method.' },
+  { q: 'Can you work from my own logo or artwork?', a: 'Yes. Send a PNG, JPG or PDF by WhatsApp or email (artwork is not uploaded through the website form for security). We’ll digitise it for embroidery or prepare it for print, or design artwork from scratch if needed.' },
+  { q: 'Embroidery, sublimation or DTF — which do I need?', a: 'Embroidery is thread branding for logos and names. Sublimation prints edge-to-edge colour into suitable fabric. DTF transfers detailed full-colour designs onto many garments. Not sure? We’ll advise the best fit for your brief.' },
+  { q: 'Where are you based and do you deliver?', a: 'Our studio is in Durban (Shop 55, Charlotte Maxeke Street, Dominion Arcade). Collect from us, or ask about courier options when we prepare your quotation.' },
 ];
 
-window.NB_CATALOGUE = { PRODUCTS, SERVICES, PRODUCT_GROUPS, GALLERY, REVIEWS, FAQS, WHATSAPP: '0614453680' };
+window.NB_CATALOGUE = { PRODUCTS, SERVICES, PRODUCT_GROUPS, GALLERY, REVIEWS, FAQS, PRICE_GUIDE_NOTE };

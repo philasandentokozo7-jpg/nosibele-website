@@ -12,6 +12,7 @@ function PageHero({
   const bg = tone === 'crimson' ? 'var(--grad-crimson)' : tone === 'ink' ? 'var(--grad-ink)' : 'var(--surface-cream)';
   const goldEye = dark ? 'var(--gold-pale)' : 'var(--gold-600)';
   return /*#__PURE__*/React.createElement("section", {
+    id: "main",
     style: {
       background: bg,
       position: 'relative',
@@ -167,7 +168,7 @@ Object.assign(window, {
 });
 
 /* ===== Nav.jsx ===== */
-/* Nosibele website — sticky, page-aware navigation with mobile menu */
+/* Nosibele website — sticky, page-aware navigation with accessible mobile menu */
 function Nav({
   current = 'home',
   onQuote,
@@ -179,38 +180,66 @@ function Nav({
   } = window.NosibeleDesignSystem_4fcb98;
   const [scrolled, setScrolled] = React.useState(false);
   const [open, setOpen] = React.useState(false);
+  const burgerRef = React.useRef(null);
+  const menuRef = React.useRef(null);
   React.useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
-    window.addEventListener('scroll', onScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
-  const links = [['Home', 'index.html', 'home'], ['Products', 'products.html', 'products'], ['Services', 'services.html', 'services'], ['Gallery', 'gallery.html', 'gallery'], ['About', 'about.html', 'about'], ['Contact', 'contact.html', 'contact']];
-  const desktopLinks = links;
+  React.useEffect(() => {
+    if (!open) {
+      document.body.classList.remove('nb-nav-lock');
+      return;
+    }
+    document.body.classList.add('nb-nav-lock');
+    const onKey = e => {
+      if (e.key === 'Escape') {
+        setOpen(false);
+        if (burgerRef.current) burgerRef.current.focus();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    const first = menuRef.current && menuRef.current.querySelector('a, button');
+    if (first) first.focus();
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.classList.remove('nb-nav-lock');
+    };
+  }, [open]);
+  const links = [['Home', '/', 'home'], ['Products', 'products.html', 'products'], ['Services', 'services.html', 'services'], ['Gallery', 'gallery.html', 'gallery'], ['About', 'about.html', 'about'], ['Contact', 'contact.html', 'contact']];
   const solid = scrolled || open;
+  const closeMenu = () => {
+    setOpen(false);
+    if (burgerRef.current) burgerRef.current.focus();
+  };
   return /*#__PURE__*/React.createElement("header", {
+    className: "nb-site-header",
     style: {
       position: 'sticky',
       top: 0,
       zIndex: 60,
-      background: solid ? 'rgba(253,250,243,0.86)' : 'transparent',
+      background: solid ? 'rgba(253,250,243,0.92)' : 'transparent',
       backdropFilter: solid ? 'var(--blur-nav)' : 'none',
       WebkitBackdropFilter: solid ? 'var(--blur-nav)' : 'none',
       borderBottom: solid ? '1px solid var(--border-hairline)' : '1px solid transparent',
       transition: 'background var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out)'
     }
   }, /*#__PURE__*/React.createElement("div", {
+    className: "nb-navbar",
     style: {
       maxWidth: 'var(--container-xl)',
       margin: '0 auto',
-      padding: '14px var(--gutter)',
+      padding: '12px var(--gutter)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      gap: 24
+      gap: 16
     }
   }, /*#__PURE__*/React.createElement("a", {
-    href: "index.html",
+    href: "/",
+    className: "nb-brand",
     style: {
       display: 'flex',
       alignItems: 'center',
@@ -219,7 +248,7 @@ function Nav({
     }
   }, /*#__PURE__*/React.createElement("img", {
     src: "assets/logo-red-tile.jpeg",
-    alt: "Nosibele",
+    alt: "Nosibele Design & Embroidery",
     width: "42",
     height: "42",
     style: {
@@ -227,6 +256,7 @@ function Nav({
       boxShadow: 'var(--shadow-sm)'
     }
   }), /*#__PURE__*/React.createElement("span", {
+    className: "nb-brand-name",
     style: {
       fontFamily: 'var(--font-display)',
       fontWeight: 600,
@@ -235,8 +265,9 @@ function Nav({
       letterSpacing: '0.01em'
     }
   }, "Nosibele")), /*#__PURE__*/React.createElement("nav", {
-    className: "nb-navlinks"
-  }, desktopLinks.map(([l, href, id]) => /*#__PURE__*/React.createElement("a", {
+    className: "nb-navlinks",
+    "aria-label": "Primary"
+  }, links.map(([l, href, id]) => /*#__PURE__*/React.createElement("a", {
     key: l,
     href: href,
     className: 'nb-navlink' + (current === id ? ' nb-navlink--on' : ''),
@@ -253,7 +284,7 @@ function Nav({
   }, /*#__PURE__*/React.createElement(WhatsAppButton, {
     phone: whatsapp,
     variant: "outline",
-    message: window.NB_CONFIG ? window.NB_CONFIG.waMessage() : "Hello Nosibele Design & Embroidery, I would like a quotation."
+    message: window.NB_CONFIG && window.NB_CONFIG.waMessages ? window.NB_CONFIG.waMessages.general : "Hello Nosibele Design & Embroidery, I would like to enquire about your services."
   }, "WhatsApp"), onQuote ? /*#__PURE__*/React.createElement(Button, {
     variant: "primary",
     onClick: onQuote
@@ -262,7 +293,11 @@ function Nav({
     as: "a",
     href: "contact.html"
   }, "Request a quote")), /*#__PURE__*/React.createElement("button", {
-    "aria-label": "Menu",
+    ref: burgerRef,
+    type: "button",
+    "aria-label": open ? "Close menu" : "Open menu",
+    "aria-expanded": open ? "true" : "false",
+    "aria-controls": "nb-mobile-nav",
     onClick: () => setOpen(o => !o),
     className: "nb-burger",
     style: {
@@ -271,11 +306,13 @@ function Nav({
       background: 'none',
       border: 'none',
       cursor: 'pointer',
-      padding: 8
+      padding: 10,
+      minWidth: 44,
+      minHeight: 44
     }
   }, /*#__PURE__*/React.createElement("span", {
     style: {
-      width: 24,
+      width: 22,
       height: 2,
       background: 'var(--text-strong)',
       borderRadius: 2,
@@ -284,7 +321,7 @@ function Nav({
     }
   }), /*#__PURE__*/React.createElement("span", {
     style: {
-      width: 24,
+      width: 22,
       height: 2,
       background: 'var(--text-strong)',
       borderRadius: 2,
@@ -292,7 +329,7 @@ function Nav({
     }
   }), /*#__PURE__*/React.createElement("span", {
     style: {
-      width: 24,
+      width: 22,
       height: 2,
       background: 'var(--text-strong)',
       borderRadius: 2,
@@ -300,34 +337,30 @@ function Nav({
       transform: open ? 'translateY(-7px) rotate(-45deg)' : 'none'
     }
   }))), open && /*#__PURE__*/React.createElement("div", {
+    id: "nb-mobile-nav",
+    ref: menuRef,
     className: "nb-mobilemenu",
-    style: {
-      padding: '8px var(--gutter) 22px',
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 4
-    }
-  }, links.map(([l, href, id]) => /*#__PURE__*/React.createElement("a", {
+    role: "navigation",
+    "aria-label": "Mobile"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "nb-mobilemenu__bar"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "nb-mobilemenu__label"
+  }, "Menu"), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    className: "nb-mobilemenu__close",
+    "aria-label": "Close menu",
+    onClick: closeMenu
+  }, "Close")), links.map(([l, href, id]) => /*#__PURE__*/React.createElement("a", {
     key: l,
     href: href,
-    style: {
-      fontFamily: 'var(--font-display)',
-      fontSize: 22,
-      fontWeight: 600,
-      textDecoration: 'none',
-      color: current === id ? 'var(--crimson-500)' : 'var(--text-strong)',
-      padding: '8px 0',
-      borderBottom: '1px solid var(--border-hairline)'
-    }
+    className: current === id ? 'is-on' : undefined,
+    onClick: () => setOpen(false)
   }, l)), /*#__PURE__*/React.createElement("div", {
-    style: {
-      display: 'flex',
-      gap: 10,
-      marginTop: 14
-    }
+    className: "nb-mobilemenu__cta"
   }, /*#__PURE__*/React.createElement(WhatsAppButton, {
     phone: whatsapp,
-    message: window.NB_CONFIG ? window.NB_CONFIG.waMessage() : "Hello Nosibele Design & Embroidery, I would like a quotation.",
+    message: window.NB_CONFIG && window.NB_CONFIG.waMessages ? window.NB_CONFIG.waMessages.general : "Hello Nosibele Design & Embroidery, I would like to enquire about your services.",
     style: {
       flex: 1,
       justifyContent: 'center'
@@ -342,11 +375,36 @@ function Nav({
   }, "Request a quote"))), /*#__PURE__*/React.createElement("style", null, `
         .nb-navlinks { display: flex; gap: 26px; align-items: center; }
         .nb-navcta { display: flex; align-items: center; gap: 12px; }
-        .nb-burger { display: none; }
+        .nb-burger { display: none; align-items: center; justify-content: center; }
         .nb-navlink::after { content:''; position:absolute; left:0; bottom:-2px; height:1.5px; width:0;
           background: var(--gold-500); transition: width var(--dur-base) var(--ease-out); }
         .nb-navlink:hover::after, .nb-navlink--on::after { width:100%; }
+        .nb-navlink:focus-visible, .nb-burger:focus-visible, .nb-brand:focus-visible {
+          outline: 3px solid var(--gold-500); outline-offset: 3px; border-radius: 6px;
+        }
+        body.nb-nav-lock { overflow: hidden; touch-action: none; }
+        .nb-mobilemenu {
+          padding: 8px var(--gutter) 22px; display: flex; flex-direction: column; gap: 2px;
+          max-height: min(78vh, 640px); overflow: auto; -webkit-overflow-scrolling: touch;
+          border-top: 1px solid var(--border-hairline);
+          background: rgba(253,250,243,0.97);
+        }
+        .nb-mobilemenu__bar { display:flex; align-items:center; justify-content:space-between; margin-bottom: 6px; }
+        .nb-mobilemenu__label { font-size: var(--fs-overline); font-weight:700; letter-spacing: var(--ls-overline); text-transform:uppercase; color: var(--gold-600); }
+        .nb-mobilemenu__close {
+          min-height:44px; min-width:44px; border:1px solid var(--border-soft); border-radius:12px;
+          background: var(--surface-card); color: var(--text-strong); font-weight:700; cursor:pointer; padding:0 14px;
+        }
+        .nb-mobilemenu a {
+          font-family: var(--font-display); font-size: clamp(1.35rem, 5vw, 1.7rem); font-weight:600;
+          text-decoration:none; color: var(--text-strong); padding: 14px 4px; border-bottom: 1px solid var(--border-hairline);
+        }
+        .nb-mobilemenu a.is-on { color: var(--crimson-500); }
+        .nb-mobilemenu__cta { display:flex; gap:10px; margin-top:16px; flex-wrap:wrap; }
         @media (max-width: 1240px){ .nb-navlinks{ display:none; } .nb-navcta{ display:none; } .nb-burger{ display:flex; } }
+        @media (prefers-reduced-motion: reduce) {
+          .nb-burger span, .nb-navlink::after { transition: none !important; }
+        }
       `));
 }
 Object.assign(window, {
@@ -365,7 +423,8 @@ function Hero({
     Tag
   } = window.NosibeleDesignSystem_4fcb98;
   return /*#__PURE__*/React.createElement("section", {
-    id: "top",
+    id: "main",
+    "data-hero": "true",
     style: {
       maxWidth: 'var(--container-xl)',
       margin: '0 auto',
@@ -433,7 +492,7 @@ function Hero({
     onClick: onQuote
   }, "Request a quote"), /*#__PURE__*/React.createElement(WhatsAppButton, {
     phone: whatsapp,
-    message: window.NB_CONFIG ? window.NB_CONFIG.waMessage() : "Hello Nosibele Design & Embroidery, I would like a quotation.",
+    message: window.NB_CONFIG && window.NB_CONFIG.waMessages ? window.NB_CONFIG.waMessages.general : "Hello Nosibele Design & Embroidery, I would like to enquire about your services.",
     style: {
       height: 'var(--control-h-lg)'
     }
@@ -445,7 +504,7 @@ function Hero({
       flexWrap: 'wrap'
     },
     className: "nb-hero-stats"
-  }, [['Est. 2024', 'Durban studio'], ['1000+', 'Garments finished'], ['7–10 days', 'Typical turnaround']].map(([n, l]) => /*#__PURE__*/React.createElement("div", {
+  }, [['Est. 2024', 'Durban studio'], ['Made to order', 'Quote-based production'], ['Typical lead time', 'Confirmed on quotation']].map(([n, l]) => /*#__PURE__*/React.createElement("div", {
     key: l
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -477,6 +536,10 @@ function Hero({
   }, /*#__PURE__*/React.createElement("img", {
     src: "assets/hero-uniform.webp",
     alt: "The Nosibele branded sublimation jersey with embroidered gold crest",
+    width: "900",
+    height: "1125",
+    fetchPriority: "high",
+    decoding: "async",
     style: {
       width: '100%',
       height: '100%',
@@ -523,7 +586,7 @@ function Hero({
       fontSize: 12,
       color: 'var(--text-muted)'
     }
-  }, "Every stitch checked by hand"))), /*#__PURE__*/React.createElement("div", {
+  }, "Checked before it leaves the studio"))), /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'absolute',
       top: 18,
@@ -547,7 +610,7 @@ function TrustBand() {
     t: 'Durban-based studio',
     icon: 'M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zM12 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z'
   }, {
-    t: 'Fast turnaround',
+    t: 'Clear lead times',
     icon: 'M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z'
   }, {
     t: 'Quality workmanship',
@@ -834,13 +897,13 @@ const NB_SVC_FEATURE = [{
   img: NB_ASSETS + 'services/cards/dtf.png',
   alt: "DTF printing at the Nosibele studio — crisp full-colour transfer detail on fabric",
   lead: 'Crisp, full-colour detail',
-  desc: 'Direct-to-film transfers reproduce intricate logos and photographic artwork in vivid, durable colour — on virtually any fabric.'
+  desc: 'Direct-to-film transfers reproduce intricate logos and photographic artwork in vivid colour on many garment types — suitability depends on fabric and the artwork.'
 }, {
   title: 'Sublimation Printing',
   img: NB_ASSETS + 'services/cards/sublimation.png',
   alt: "Sublimation printing — dye infused edge-to-edge into golf shirts and supporters’ wear",
   lead: 'Colour woven into the cloth',
-  desc: 'Dye is infused edge-to-edge into the fabric, so designs never crack, peel or fade — ideal for golf shirts, dresses and supporters’ wear.'
+  desc: 'Dye is infused edge-to-edge into the fabric for a durable full-colour finish — ideal for golf shirts, dresses and supporters’ wear when cared for as advised.'
 }, {
   title: 'Corporate Branding',
   img: NB_ASSETS + 'services/cards/corporate.png',
@@ -874,8 +937,11 @@ const NB_SVC_MORE = [{
 }];
 function nbWaLink(title) {
   const C = window.NB_CONFIG || {};
-  const digits = String(C.whatsapp || '0614453680').replace(/[^0-9]/g, '').replace(/^0/, '27');
-  const msg = C.waMessage ? C.waMessage(title) : 'Hello Nosibele Design & Embroidery,\n\nI would like a quotation for the ' + title + '.';
+  const msg = C.waMessage ? C.waMessage(title) : 'Hello Nosibele Design & Embroidery, I would like a quotation for the ' + title + '.';
+  if (typeof C.waLink === 'function') return C.waLink(msg);
+  let digits = String(C.whatsapp || C.whatsappDigits || '0614453680').replace(/[^0-9]/g, '');
+  if (digits.charAt(0) === '0') digits = '27' + digits.slice(1);
+  if (!digits) digits = '27614453680';
   return 'https://wa.me/' + digits + '?text=' + encodeURIComponent(msg);
 }
 function Services({
@@ -1046,9 +1112,9 @@ function Services({
       color: 'rgba(250,244,232,0.82)',
       margin: '16px 0 0'
     }
-  }, "Premium thread-level branding \u2014 names, logos and numbers raised in lasting stitch. It is where Nosibele began, and the finish our customers are known for."), /*#__PURE__*/React.createElement("ul", {
+  }, "Thread-level branding \u2014 names, logos and numbers raised in embroidery stitch. It is where Nosibele began, and a finish our customers value."), /*#__PURE__*/React.createElement("ul", {
     className: "nb-feature__list"
-  }, ['Raised, durable stitching', 'Digitised for perfect logos', 'Premium thread & fabric'].map(f => /*#__PURE__*/React.createElement("li", {
+  }, ['Raised embroidery stitching', 'Digitised for logo embroidery', 'Quality thread & fabric'].map(f => /*#__PURE__*/React.createElement("li", {
     key: f
   }, /*#__PURE__*/React.createElement("span", {
     className: "nb-tick",
@@ -1277,7 +1343,7 @@ Object.assign(window, {
 /* ===== Craft.jsx ===== */
 /* Nosibele website — the craft / process band (dark feature section) */
 function Craft() {
-  const steps = [['01', 'Share your idea', 'Send your logo, design or inspiration — over WhatsApp, email or the quote form.'], ['02', 'Design consultation', 'We discuss garments, colours and placement, then send a tailored quote — usually within a day.'], ['03', 'Digitising', 'Your artwork is digitised and prepared for embroidery, sublimation or DTF print.'], ['04', 'Embroidery & production', 'Each piece is stitched and produced on premium thread and fabric in our studio.'], ['05', 'Quality inspection', 'Every garment is checked by hand — stitching, colour and finish — before it leaves us.'], ['06', 'Delivered with pride', 'Ready in 7–10 working days, packed beautifully and couriered across South Africa.']];
+  const steps = [['01', 'Request a quotation', 'Share what you need — garment, quantity, artwork or inspiration — via the quote form, WhatsApp or email.'], ['02', 'Review & quotation', 'We review the request and send a tailored quotation. Timing for the reply depends on complexity; we aim to respond promptly.'], ['03', 'Approve quote & artwork', 'Production begins only after you approve the quotation, complete any agreed payment or deposit, and approve artwork (spelling, colours, placement and sizes).'], ['04', 'Production', 'Approved work is embroidered, printed or finished in our Durban studio according to the agreed specification.'], ['05', 'Quality check', 'Garments are checked for stitching, colour and finish before release.'], ['06', 'Collect or courier', 'Collect from the studio or arrange courier as agreed on your quotation. Lead times are confirmed per order.']];
   return /*#__PURE__*/React.createElement("section", {
     id: "craft",
     style: {
@@ -1405,12 +1471,29 @@ function Testimonial() {
   const {
     WhatsAppButton
   } = window.NosibeleDesignSystem_4fcb98;
-  const reviews = window.NB_CATALOGUE && window.NB_CATALOGUE.REVIEWS || [];
+  const reviews = (window.NB_CATALOGUE && window.NB_CATALOGUE.REVIEWS || []).filter(function (r) { return r && r.permissionConfirmed === true; });
   const WA = window.NB_CONFIG && window.NB_CONFIG.whatsapp || '0614453680';
-  if (!reviews.length) return null;
-  const featured = reviews[0];
+  // Always show Google review CTA band; quote cards only when permission-confirmed.
+  const featured = reviews[0] || null;
   const rest = reviews.slice(1);
   const waReview = window.NB_CONFIG ? 'Hello Nosibele Design & Embroidery,\n\nI’d like to share a review of my order.' : 'Hello Nosibele, I’d like to leave a review.';
+  if (!featured) {
+    return /*#__PURE__*/React.createElement("section", {
+      style: { background: 'var(--surface-cream)', borderTop: '1px solid var(--border-hairline)', borderBottom: '1px solid var(--border-hairline)' }
+    }, /*#__PURE__*/React.createElement("div", {
+      style: { maxWidth: 'var(--container-xl)', margin: '0 auto', padding: 'var(--section-y) var(--gutter)', textAlign: 'center' }
+    }, /*#__PURE__*/React.createElement("h2", {
+      style: { fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 'var(--fs-h2)', color: 'var(--text-strong)', margin: '0 0 12px' }
+    }, "See what customers say on Google"), /*#__PURE__*/React.createElement("p", {
+      style: { fontSize: 'var(--fs-body)', color: 'var(--text-body)', maxWidth: 520, margin: '0 auto 20px' }
+    }, "We publish named testimonials on this site only with customer permission. In the meantime, you can read and leave reviews on our Google Business Profile."), /*#__PURE__*/React.createElement("a", {
+      className: 'nb-btn nb-btn--crimson',
+      href: window.NB_CONFIG && window.NB_CONFIG.googleProfileUrl || '#',
+      target: '_blank',
+      rel: 'noopener noreferrer',
+      onClick: function () { try { if (typeof window.nbTrack === 'function') window.nbTrack('google_review_click', { page: 'testimonial' }); } catch (e) {} }
+    }, "View Google reviews")));
+  }
   return /*#__PURE__*/React.createElement("section", {
     style: {
       background: 'var(--surface-cream)',
@@ -1446,7 +1529,7 @@ function Testimonial() {
       height: 1,
       background: 'var(--gold-500)'
     }
-  }), "Loved by our customers", /*#__PURE__*/React.createElement("span", {
+  }), featured ? "Customer feedback" : "Reviews on Google", /*#__PURE__*/React.createElement("span", {
     style: {
       width: 26,
       height: 1,
@@ -1720,6 +1803,15 @@ function QuoteSection({
   const submit = async e => {
     e.preventDefault();
     const fd = new FormData(e.target);
+    if ((fd.get('_gotcha') || '').toString().trim()) {
+      setLead({ name: fd.get('name') || '—', item: item || '—', qty: fd.get('qty') || '—', status: 'New' });
+      setSent(true);
+      return;
+    }
+    if (!fd.get('privacy_ack')) {
+      setError('Please confirm you have read the Privacy Notice before sending.');
+      return;
+    }
     const leadObj = {
       name: fd.get('name') || '—',
       item: item || '—',
@@ -1743,7 +1835,10 @@ function QuoteSection({
       data.append('Delivery or collection', fulfilment || '');
       data.append('Notes', fd.get('notes') || '');
       data.append('Lead source', fd.get('source') || '');
-      if (fileName) data.append('Artwork (to be sent separately)', fileName);
+      data.append('Privacy acknowledgement', 'Yes');
+      data.append('Marketing opt-in', fd.get('marketing_opt_in') ? 'Yes' : 'No');
+      data.append('_gotcha', fd.get('_gotcha') || '');
+      data.append('Artwork delivery', 'Customer will send artwork separately via WhatsApp or email (website upload disabled for security)');
       data.append('_subject', 'New quote request — ' + (item || 'custom apparel'));
       const res = await fetch(endpoint, {
         method: 'POST',
@@ -1755,8 +1850,10 @@ function QuoteSection({
       if (!res.ok) throw new Error('bad response');
       setLead(leadObj);
       setSent(true);
+      try { if (typeof window.nbTrack === 'function') window.nbTrack('quote_submit', { item: item ? 'set' : 'unset' }); } catch (t) {}
     } catch (err) {
-      setError('We couldn’t send your request just now. Please WhatsApp us and we’ll sort it out straight away.');
+      try { if (typeof window.nbTrack === 'function') window.nbTrack('form_error', { form: 'quote' }); } catch (t) {}
+      setError('We couldn’t send your request just now. Please WhatsApp us on 061 445 3680, email quotes@nosibeleembroidery.co.za, or call us — and we will help you.');
     } finally {
       setSubmitting(false);
     }
@@ -1769,7 +1866,9 @@ function QuoteSection({
     setError('');
     setFulfilment('Collect from studio');
   };
-  const waMsg = window.NB_CONFIG ? window.NB_CONFIG.waMessage(item || 'custom apparel') : `Hello Nosibele Design & Embroidery,\n\nI would like a quotation for the ${item || 'custom apparel'}.`;
+  const waMsg = item
+    ? (window.NB_CONFIG ? window.NB_CONFIG.waMessage(item) : 'Hello Nosibele Design & Embroidery, I would like a quotation for the ' + item + '.')
+    : (window.NB_CONFIG && window.NB_CONFIG.waMessages ? window.NB_CONFIG.waMessages.quote : 'Hello Nosibele Design & Embroidery, I would like to request a quotation.');
   const stepNum = n => /*#__PURE__*/React.createElement("span", {
     className: "nbq-step"
   }, n);
@@ -1848,7 +1947,7 @@ function QuoteSection({
       margin: '18px 0 0',
       maxWidth: 420
     }
-  }, "A few details is all we need. We\u2019ll bring your idea to thread and reply with a tailored quote \u2014 usually within a day."), /*#__PURE__*/React.createElement("ul", {
+  }, "A few details is all we need. Submitting this form is a request for a quotation \u2014 not an accepted order. We reply with a tailored quote after reviewing your requirements."), /*#__PURE__*/React.createElement("ul", {
     style: {
       listStyle: 'none',
       padding: 0,
@@ -1857,7 +1956,7 @@ function QuoteSection({
       flexDirection: 'column',
       gap: 14
     }
-  }, ['A tailored quote — usually within a day', 'No obligation, no pressure', 'Talk to a real person in our Durban studio'].map(r => /*#__PURE__*/React.createElement("li", {
+  }, ['A quotation request — no order until you approve', 'No obligation from sending the form', 'Talk to a real person in our Durban studio'].map(r => /*#__PURE__*/React.createElement("li", {
     key: r,
     style: {
       display: 'flex',
@@ -1893,7 +1992,7 @@ function QuoteSection({
     className: "nbq-card__ribbon"
   }, /*#__PURE__*/React.createElement("span", {
     className: "nbq-card__ribbon-eye"
-  }, "Start your order"), /*#__PURE__*/React.createElement("span", {
+  }, "Request a quotation"), /*#__PURE__*/React.createElement("span", {
     className: "nbq-card__ribbon-title"
   }, "Your quote, beautifully simple")), /*#__PURE__*/React.createElement("div", {
     className: "nbq-card__body"
@@ -1912,12 +2011,14 @@ function QuoteSection({
       margin: '14px 0 0'
     }
   }, "Thank you, ", lead.name.split(' ')[0], "!"), /*#__PURE__*/React.createElement("p", {
+    role: "status",
+    "aria-live": "polite",
     style: {
       color: 'var(--text-body)',
       margin: '10px 0 18px',
       lineHeight: 'var(--lh-normal)'
     }
-  }, "We\u2019ve logged your request and will reply with a tailored quote, usually within a day.")), /*#__PURE__*/React.createElement("div", {
+  }, "We\u2019ve received your quotation request. We will review it and reply with a tailored quotation. This is not yet an accepted order.")), /*#__PURE__*/React.createElement("div", {
     style: {
       background: 'var(--cream-100)',
       borderRadius: 'var(--radius-md)',
@@ -1933,7 +2034,7 @@ function QuoteSection({
       color: 'var(--gold-600)',
       marginBottom: 10
     }
-  }, "Lead captured"), /*#__PURE__*/React.createElement("div", {
+  }, "Request summary"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'grid',
       gridTemplateColumns: 'auto 1fr',
@@ -1987,7 +2088,15 @@ function QuoteSection({
     onSubmit: submit
   }, /*#__PURE__*/React.createElement("div", {
     className: "nbq-grouphead"
-  }, stepNum(1), " Your details"), /*#__PURE__*/React.createElement("div", {
+  }, stepNum(1), " Your details"), /*#__PURE__*/React.createElement("p", {
+    className: "nbq-help nbq-help-details",
+    style: {
+      margin: '0 0 12px',
+      fontSize: 'var(--fs-caption)',
+      color: 'var(--text-muted)',
+      lineHeight: 1.45
+    }
+  }, "We use your name and WhatsApp number only to respond to this quotation request (and for marketing only if you opt in below). Required fields are marked with *."), /*#__PURE__*/React.createElement("div", {
     className: "nbq-row2"
   }, /*#__PURE__*/React.createElement("label", {
     className: "nbq-f"
@@ -2069,38 +2178,38 @@ function QuoteSection({
     style: {
       marginTop: 22
     }
-  }, stepNum(3), " Finishing touches"), /*#__PURE__*/React.createElement("label", {
+  }, stepNum(3), " Finishing touches"), /*#__PURE__*/React.createElement("div", {
     className: "nbq-f"
   }, /*#__PURE__*/React.createElement("span", {
     className: "nbq-l"
-  }, "Artwork or logo ", /*#__PURE__*/React.createElement("em", null, "(optional)")), /*#__PURE__*/React.createElement("label", {
-    className: "nbq-upload"
-  }, /*#__PURE__*/React.createElement("svg", {
-    width: "18",
-    height: "18",
-    viewBox: "0 0 24 24",
-    fill: "none",
-    stroke: "currentColor",
-    strokeWidth: "1.7",
-    strokeLinecap: "round",
-    strokeLinejoin: "round"
-  }, /*#__PURE__*/React.createElement("path", {
-    d: "M12 16V4M7 9l5-5 5 5M5 20h14"
-  })), /*#__PURE__*/React.createElement("span", {
-    className: "nbq-upload__t"
-  }, fileName || 'Upload PNG, JPG or PDF'), /*#__PURE__*/React.createElement("input", {
-    type: "file",
-    name: "artwork",
-    accept: "image/*,.pdf",
-    onChange: e => setFileName(e.target.files[0] ? e.target.files[0].name : '')
-  }))), /*#__PURE__*/React.createElement("label", {
+  }, "Artwork or logo ", /*#__PURE__*/React.createElement("em", null, "(optional \u2014 send securely)")), /*#__PURE__*/React.createElement("p", {
+    className: "nbq-help",
+    style: {
+      margin: '8px 0 0',
+      fontSize: 'var(--fs-caption)',
+      color: 'var(--text-muted)',
+      lineHeight: 1.45
+    }
+  }, "For security, artwork files are not uploaded through this website form. After you send this quotation request, share PNG, JPG or PDF artwork by WhatsApp (", /*#__PURE__*/React.createElement("a", {
+    href: (window.NB_CONFIG && window.NB_CONFIG.phoneHref) || 'tel:+27614453680',
+    style: {
+      color: 'var(--crimson-600)',
+      fontWeight: 700
+    }
+  }, (window.NB_CONFIG && window.NB_CONFIG.phone) || '061 445 3680'), ") or email ", /*#__PURE__*/React.createElement("a", {
+    href: "mailto:artwork@nosibeleembroidery.co.za",
+    style: {
+      color: 'var(--crimson-600)',
+      fontWeight: 700
+    }
+  }, "artwork@nosibeleembroidery.co.za"), ". Artwork is used only to prepare your quotation and, if you proceed, your order.")), /*#__PURE__*/React.createElement("label", {
     className: "nbq-f",
     style: {
       marginTop: 14
     }
   }, /*#__PURE__*/React.createElement("span", {
     className: "nbq-l"
-  }, "Notes"), /*#__PURE__*/React.createElement("textarea", {
+  }, "Notes ", /*#__PURE__*/React.createElement("em", null, "(optional)")), /*#__PURE__*/React.createElement("textarea", {
     name: "notes",
     rows: "3",
     placeholder: "Colours, sizes, deadline, or anything else we should know."
@@ -2120,7 +2229,82 @@ function QuoteSection({
   }, "Select\u2026"), /*#__PURE__*/React.createElement("option", null, "WhatsApp"), /*#__PURE__*/React.createElement("option", null, "Instagram"), /*#__PURE__*/React.createElement("option", null, "Facebook"), /*#__PURE__*/React.createElement("option", null, "Referral / word of mouth"), /*#__PURE__*/React.createElement("option", null, "Google search"), /*#__PURE__*/React.createElement("option", null, "Returning customer")), /*#__PURE__*/React.createElement("span", {
     className: "nbq-chev",
     "aria-hidden": "true"
-  }, "\u25BE"))), error && /*#__PURE__*/React.createElement("p", {
+  }, "\u25BE"))), /*#__PURE__*/React.createElement("input", {
+    type: "text",
+    name: "_gotcha",
+    tabIndex: -1,
+    autoComplete: "off",
+    "aria-hidden": "true",
+    className: "nbq-hp",
+    style: {
+      position: 'absolute',
+      left: '-10000px',
+      width: 1,
+      height: 1,
+      overflow: 'hidden'
+    }
+  }), /*#__PURE__*/React.createElement("label", {
+    className: "nbq-check",
+    style: {
+      display: 'flex',
+      gap: 10,
+      alignItems: 'flex-start',
+      marginTop: 16,
+      fontSize: 'var(--fs-small)',
+      color: 'var(--text-body)',
+      lineHeight: 1.45
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "checkbox",
+    name: "privacy_ack",
+    required: true,
+    style: {
+      marginTop: 3,
+      width: 18,
+      height: 18,
+      flex: 'none',
+      accentColor: 'var(--crimson-500)'
+    }
+  }), /*#__PURE__*/React.createElement("span", null, "I have read the ", /*#__PURE__*/React.createElement("a", {
+    href: "/privacy.html",
+    target: "_blank",
+    rel: "noopener noreferrer",
+    style: {
+      color: 'var(--crimson-600)',
+      fontWeight: 700
+    }
+  }, "Privacy Notice"), " and the ", /*#__PURE__*/React.createElement("a", {
+    href: "/commercial-terms.html",
+    target: "_blank",
+    rel: "noopener noreferrer",
+    style: {
+      color: 'var(--crimson-600)',
+      fontWeight: 700
+    }
+  }, "Quotation & Order Terms"), ". I understand this is a quotation request only, and that production starts only after an approved quotation, any agreed payment or deposit, and artwork approval.")), /*#__PURE__*/React.createElement("label", {
+    className: "nbq-check",
+    style: {
+      display: 'flex',
+      gap: 10,
+      alignItems: 'flex-start',
+      marginTop: 10,
+      fontSize: 'var(--fs-small)',
+      color: 'var(--text-muted)',
+      lineHeight: 1.45
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "checkbox",
+    name: "marketing_opt_in",
+    defaultChecked: false,
+    style: {
+      marginTop: 3,
+      width: 18,
+      height: 18,
+      flex: 'none',
+      accentColor: 'var(--crimson-500)'
+    }
+  }), /*#__PURE__*/React.createElement("span", null, "Optional: I am happy for Nosibele to contact me with occasional updates about products or offers. This is separate from my enquiry.")), error && /*#__PURE__*/React.createElement("p", {
+    role: "alert",
     style: {
       color: 'var(--crimson-600)',
       fontSize: 'var(--fs-small)',
@@ -2143,7 +2327,7 @@ function QuoteSection({
       textAlign: 'center',
       margin: '12px 0 0'
     }
-  }, "We\u2019ll only use your details to reply about your order."))))), /*#__PURE__*/React.createElement("style", null, nbQuoteCSS));
+  }, "Required fields are marked with *. Name and WhatsApp number are needed so we can reply. Product, quantity and notes help us prepare a quotation. Optional marketing is only recorded if you tick the separate box. Form submissions are processed via Formspree. Customer details are not placed in page URLs."))))), /*#__PURE__*/React.createElement("style", null, nbQuoteCSS));
 }
 const nbQuoteCSS = `
 .nbq-stitch{position:absolute;inset:0;pointer-events:none;opacity:.5;
@@ -2209,7 +2393,7 @@ Object.assign(window, {
 function CTABand({
   whatsapp = '0614453680',
   title = 'Ready to bring your idea to thread?',
-  text = 'Send us your details and we’ll reply with a tailored quote, usually within a day.'
+  text = 'Send us your details and we’ll reply with a tailored quotation after reviewing your requirements.'
 }) {
   const {
     Button,
@@ -2276,7 +2460,7 @@ function CTABand({
   }, "Request a quote"), /*#__PURE__*/React.createElement(WhatsAppButton, {
     phone: whatsapp,
     variant: "dark",
-    message: window.NB_CONFIG ? window.NB_CONFIG.waMessage() : "Hello Nosibele Design & Embroidery, I would like a quotation.",
+    message: window.NB_CONFIG && window.NB_CONFIG.waMessages ? window.NB_CONFIG.waMessages.general : "Hello Nosibele Design & Embroidery, I would like to enquire about your services.",
     style: {
       height: 'var(--control-h-lg)'
     }
@@ -2323,11 +2507,11 @@ function Footer({
   const s = C.socials || {};
   const cols = [['Products', 'products.html', ['Corporate wear', 'Sportswear', 'Traditional wear', 'School & outerwear', 'Workwear', 'Accessories']], ['Services', 'services.html', ['Embroidery', 'DTF printing', 'Sublimation printing', 'Logo & name branding', 'Corporate branding', 'Bulk orders']], ['Explore', null, ['Home', 'Gallery', 'About us', 'Request a quote', 'WhatsApp us']]];
   const exploreHrefs = {
-    'Home': 'index.html',
+    'Home': '/',
     'Gallery': 'gallery.html',
     'About us': 'about.html',
     'Request a quote': 'contact.html',
-    'WhatsApp us': 'contact.html'
+    'WhatsApp us': (typeof window !== 'undefined' && window.NB_CONFIG && typeof window.NB_CONFIG.waLink === 'function') ? window.NB_CONFIG.waLink(window.NB_CONFIG.waMessages.general) : 'https://wa.me/27614453680?text=' + encodeURIComponent('Hello Nosibele Design & Embroidery, I would like to enquire about your services.')
   };
   const linkS = {
     color: 'var(--text-on-dark-muted)',
@@ -2415,7 +2599,7 @@ function Footer({
     kind: k
   })))), /*#__PURE__*/React.createElement(WhatsAppButton, {
     phone: WA,
-    message: C.waMessage ? C.waMessage() : 'Hello Nosibele Design & Embroidery, I would like a quotation.'
+    message: C.waMessages ? C.waMessages.general : 'Hello Nosibele Design & Embroidery, I would like to enquire about your services.'
   }, "Chat on WhatsApp")), cols.map(([h, href, items]) => /*#__PURE__*/React.createElement("div", {
     key: h
   }, /*#__PURE__*/React.createElement("div", {
@@ -2436,13 +2620,20 @@ function Footer({
       flexDirection: 'column',
       gap: 11
     }
-  }, items.map(i => /*#__PURE__*/React.createElement("li", {
+  }, items.map(i => {
+    const itemHref = href || exploreHrefs[i] || '#';
+    const isWa = /^https:\/\/wa\.me\//.test(itemHref);
+    return /*#__PURE__*/React.createElement("li", {
     key: i
   }, /*#__PURE__*/React.createElement("a", {
-    href: href || exploreHrefs[i] || '#',
+    href: itemHref,
     className: "nb-foot-link",
-    style: linkS
-  }, i))))))), /*#__PURE__*/React.createElement("div", {
+    style: linkS,
+    target: isWa ? '_blank' : undefined,
+    rel: isWa ? 'noopener noreferrer' : undefined,
+    "aria-label": isWa ? 'Chat with Nosibele Design & Embroidery on WhatsApp' : undefined
+  }, i));
+  }))))), /*#__PURE__*/React.createElement("div", {
     style: {
       borderTop: '1px solid var(--border-on-dark)'
     }
@@ -2474,26 +2665,82 @@ function Footer({
       fontSize: 'var(--fs-caption)',
       color: 'var(--text-on-dark-muted)'
     }
-  }, /*#__PURE__*/React.createElement("span", null, "\xA9 2026 ", C.legalName || 'Nosibele (Pty) Ltd', " \xB7 ", C.phone || '061 445 3680', " \xB7 Durban, South Africa"), /*#__PURE__*/React.createElement("span", {
+  }, /*#__PURE__*/React.createElement("span", null, "\xA9 ", new Date().getFullYear(), " Nosibele Design & Embroidery. All rights reserved."), /*#__PURE__*/React.createElement("span", {
+    className: "nb-foot-legal",
     style: {
       display: 'flex',
-      gap: 20
+      gap: 14,
+      flexWrap: 'wrap'
     }
   }, /*#__PURE__*/React.createElement("a", {
-    href: (C.url || '') + '',
+    href: "/privacy.html",
     className: "nb-foot-link",
     style: {
       color: 'inherit',
       textDecoration: 'none'
     }
-  }, C.domain || 'nosibeleembroidery.co.za'), /*#__PURE__*/React.createElement("a", {
+  }, "Privacy Notice"), /*#__PURE__*/React.createElement("a", {
+    href: "/cookies.html",
+    className: "nb-foot-link",
+    style: {
+      color: 'inherit',
+      textDecoration: 'none'
+    }
+  }, "Cookie Policy"), /*#__PURE__*/React.createElement("a", {
+    href: "/terms.html",
+    className: "nb-foot-link",
+    style: {
+      color: 'inherit',
+      textDecoration: 'none'
+    }
+  }, "Website Terms"), /*#__PURE__*/React.createElement("a", {
+    href: "/commercial-terms.html",
+    className: "nb-foot-link",
+    style: {
+      color: 'inherit',
+      textDecoration: 'none'
+    }
+  }, "Quotation & Order Terms"), /*#__PURE__*/React.createElement("a", {
+    href: "/policies.html",
+    className: "nb-foot-link",
+    style: {
+      color: 'inherit',
+      textDecoration: 'none'
+    }
+  }, "Policies"), /*#__PURE__*/React.createElement("a", {
+    href: "/accessibility.html",
+    className: "nb-foot-link",
+    style: {
+      color: 'inherit',
+      textDecoration: 'none'
+    }
+  }, "Accessibility"), /*#__PURE__*/React.createElement("a", {
+    href: "/paia.html",
+    className: "nb-foot-link",
+    style: {
+      color: 'inherit',
+      textDecoration: 'none'
+    }
+  }, "PAIA"), /*#__PURE__*/React.createElement("a", {
+    href: "/privacy-request.html",
+    className: "nb-foot-link",
+    style: {
+      color: 'inherit',
+      textDecoration: 'none'
+    }
+  }, "Data requests"), /*#__PURE__*/React.createElement("a", {
     href: "#",
+    "data-nb-cookie-settings": "true",
     className: "nb-foot-link",
     style: {
       color: 'inherit',
       textDecoration: 'none'
+    },
+    onClick: e => {
+      e.preventDefault();
+      if (window.nbOpenCookieSettings) window.nbOpenCookieSettings();
     }
-  }, "Privacy"))), C.credit && /*#__PURE__*/React.createElement("div", {
+  }, "Cookie Settings"))), C.credit && /*#__PURE__*/React.createElement("div", {
     style: {
       borderTop: '1px solid var(--border-on-dark)'
     }
@@ -2506,7 +2753,7 @@ function Footer({
       fontSize: 'var(--fs-caption)',
       color: 'var(--text-on-dark-muted)'
     }
-  }, "Website designed & developed by", ' ', /*#__PURE__*/React.createElement("a", {
+  }, "Designed & Built by ", /*#__PURE__*/React.createElement("a", {
     href: C.credit.url,
     target: "_blank",
     rel: "noopener noreferrer",
@@ -2516,11 +2763,7 @@ function Footer({
       textDecoration: 'none',
       fontWeight: 600
     }
-  }, C.credit.name), /*#__PURE__*/React.createElement("span", {
-    style: {
-      opacity: 0.7
-    }
-  }, " \xB7 ", C.credit.tagline)))), /*#__PURE__*/React.createElement("style", null, `.nb-foot-link:hover{ color: var(--gold-pale) !important; } .nb-foot-soc:hover{ background: var(--gold-500); color: var(--burgundy-700) !important; border-color: var(--gold-500); } @media (max-width:760px){ .nb-foot{ grid-template-columns: 1fr 1fr; } }`));
+  }, C.credit.name)))), /*#__PURE__*/React.createElement("style", null, `.nb-foot-link:hover{ color: var(--gold-pale) !important; } .nb-foot-soc:hover{ background: var(--gold-500); color: var(--burgundy-700) !important; border-color: var(--gold-500); } @media (max-width:760px){ .nb-foot{ grid-template-columns: 1fr 1fr; } }`));
 }
 Object.assign(window, {
   Footer
@@ -2609,7 +2852,15 @@ function App() {
       background: 'var(--bg-page)',
       minHeight: '100vh'
     }
-  }, /*#__PURE__*/React.createElement(Nav, {
+  }, /*#__PURE__*/React.createElement("a", {
+    className: "nb-skip-react",
+    href: "#main",
+    style: {
+      position: 'absolute',
+      left: -9999,
+      top: 0
+    }
+  }, "Skip to content"), /*#__PURE__*/React.createElement(Nav, {
     onQuote: scrollToQuote,
     whatsapp: WA
   }), /*#__PURE__*/React.createElement(Hero, {
@@ -2631,7 +2882,7 @@ function App() {
   }), /*#__PURE__*/React.createElement(WhatsAppButton, {
     phone: WA,
     floating: true,
-    message: "Hi Nosibele, I'd like to chat about an order."
+    message: window.NB_CONFIG && window.NB_CONFIG.waMessages ? window.NB_CONFIG.waMessages.general : "Hello Nosibele Design & Embroidery, I would like to enquire about your services."
   }), /*#__PURE__*/React.createElement(BackToTop, null));
 }
 Object.assign(window, {
@@ -2653,7 +2904,15 @@ function ProductsPage() {
       background: 'var(--bg-page)',
       minHeight: '100vh'
     }
-  }, /*#__PURE__*/React.createElement(Nav, {
+  }, /*#__PURE__*/React.createElement("a", {
+    className: "nb-skip-react",
+    href: "#main",
+    style: {
+      position: 'absolute',
+      left: -9999,
+      top: 0
+    }
+  }, "Skip to content"), /*#__PURE__*/React.createElement(Nav, {
     current: "products",
     whatsapp: WA
   }), /*#__PURE__*/React.createElement(PageHero, {
@@ -2675,7 +2934,7 @@ function ProductsPage() {
   }), /*#__PURE__*/React.createElement(WhatsAppButton, {
     phone: WA,
     floating: true,
-    message: "Hi Nosibele, I'd like to chat about an order."
+    message: window.NB_CONFIG && window.NB_CONFIG.waMessages ? window.NB_CONFIG.waMessages.general : "Hello Nosibele Design & Embroidery, I would like to enquire about your services."
   }), /*#__PURE__*/React.createElement(BackToTop, null));
 }
 Object.assign(window, {
@@ -2697,7 +2956,15 @@ function ServicesPage() {
       background: 'var(--bg-page)',
       minHeight: '100vh'
     }
-  }, /*#__PURE__*/React.createElement(Nav, {
+  }, /*#__PURE__*/React.createElement("a", {
+    className: "nb-skip-react",
+    href: "#main",
+    style: {
+      position: 'absolute',
+      left: -9999,
+      top: 0
+    }
+  }, "Skip to content"), /*#__PURE__*/React.createElement(Nav, {
     current: "services",
     whatsapp: WA
   }), /*#__PURE__*/React.createElement(PageHero, {
@@ -2716,7 +2983,7 @@ function ServicesPage() {
   }), /*#__PURE__*/React.createElement(WhatsAppButton, {
     phone: WA,
     floating: true,
-    message: "Hi Nosibele, I'd like to chat about an order."
+    message: window.NB_CONFIG && window.NB_CONFIG.waMessages ? window.NB_CONFIG.waMessages.general : "Hello Nosibele Design & Embroidery, I would like to enquire about your services."
   }), /*#__PURE__*/React.createElement(BackToTop, null));
 }
 Object.assign(window, {
@@ -2731,13 +2998,21 @@ function AboutPage() {
     WhatsAppButton,
     Button
   } = window.NosibeleDesignSystem_4fcb98;
-  const values = [['01', 'Craftsmanship', 'Every stitch is placed with intention and checked by hand before it leaves the studio.'], ['02', 'Quality', 'Premium thread, fabric and finishes that hold their colour and shape, wash after wash.'], ['03', 'Warmth', 'We treat a single monogrammed gift with the same care as a full team’s order.'], ['04', 'Reliability', 'Honest lead-times and clear communication — most orders ready in 7–10 working days.']];
+  const values = [['01', 'Craftsmanship', 'We take care with placement, stitching and finishing, and check work before it leaves the studio.'], ['02', 'Quality', 'We use quality thread, fabric and finishes suited to the garment and branding method agreed on your quotation.'], ['03', 'Warmth', 'We treat a single monogrammed gift with the same care as a full team’s order.'], ['04', 'Reliability', 'We communicate lead times clearly and confirm timing on each quotation.']];
   return /*#__PURE__*/React.createElement("div", {
     style: {
       background: 'var(--bg-page)',
       minHeight: '100vh'
     }
-  }, /*#__PURE__*/React.createElement(Nav, {
+  }, /*#__PURE__*/React.createElement("a", {
+    className: "nb-skip-react",
+    href: "#main",
+    style: {
+      position: 'absolute',
+      left: -9999,
+      top: 0
+    }
+  }, "Skip to content"), /*#__PURE__*/React.createElement(Nav, {
     current: "about",
     whatsapp: WA
   }), /*#__PURE__*/React.createElement(PageHero, {
@@ -2804,14 +3079,14 @@ function AboutPage() {
       color: 'var(--text-body)',
       margin: '14px 0 0'
     }
-  }, "From corporate uniforms and workwear to varsity regalia, ceremonial pieces and one-off gifts, our promise stays the same: premium materials, careful finishing, and apparel you\u2019ll be proud to wear."), /*#__PURE__*/React.createElement("div", {
+  }, "From corporate uniforms and workwear to ceremonial pieces and one-off gifts, we focus on careful finishing and apparel made to the specification we agree with you."), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       gap: 36,
       marginTop: 30,
       flexWrap: 'wrap'
     }
-  }, [['Est. 2024', 'Durban studio'], ['1000+', 'Garments finished'], ['7–10 days', 'Typical turnaround']].map(([n, l]) => /*#__PURE__*/React.createElement("div", {
+  }, [['Est. 2024', 'Durban studio'], ['Made to order', 'Quote-based production'], ['Typical lead time', 'Confirmed on quotation']].map(([n, l]) => /*#__PURE__*/React.createElement("div", {
     key: l
   }, /*#__PURE__*/React.createElement("div", {
     style: {
@@ -2892,7 +3167,7 @@ function AboutPage() {
   }), /*#__PURE__*/React.createElement(WhatsAppButton, {
     phone: WA,
     floating: true,
-    message: "Hi Nosibele, I'd like to chat about an order."
+    message: window.NB_CONFIG && window.NB_CONFIG.waMessages ? window.NB_CONFIG.waMessages.general : "Hello Nosibele Design & Embroidery, I would like to enquire about your services."
   }), /*#__PURE__*/React.createElement(BackToTop, null), /*#__PURE__*/React.createElement("style", null, `@media (max-width: 860px){ .nb-2col{ grid-template-columns: 1fr; } }`));
 }
 Object.assign(window, {
@@ -2928,13 +3203,38 @@ function GalleryPage() {
   const filters = ['All', 'Craftsmanship'].concat(groups);
   const [active, setActive] = React.useState('All');
   const [light, setLight] = React.useState(null);
+  const closeRef = React.useRef(null);
   const shown = tiles.filter(t => active === 'All' || t.group === active);
+  React.useEffect(() => {
+    if (!light) {
+      document.body.classList.remove('nb-nav-lock');
+      return;
+    }
+    document.body.classList.add('nb-nav-lock');
+    const onKey = e => {
+      if (e.key === 'Escape') setLight(null);
+    };
+    window.addEventListener('keydown', onKey);
+    if (closeRef.current) closeRef.current.focus();
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.classList.remove('nb-nav-lock');
+    };
+  }, [light]);
   return /*#__PURE__*/React.createElement("div", {
     style: {
       background: 'var(--bg-page)',
       minHeight: '100vh'
     }
-  }, /*#__PURE__*/React.createElement(Nav, {
+  }, /*#__PURE__*/React.createElement("a", {
+    className: "nb-skip-react",
+    href: "#main",
+    style: {
+      position: 'absolute',
+      left: -9999,
+      top: 0
+    }
+  }, "Skip to content"), /*#__PURE__*/React.createElement(Nav, {
     current: "gallery",
     whatsapp: WA
   }), /*#__PURE__*/React.createElement(PageHero, {
@@ -3041,15 +3341,18 @@ function GalleryPage() {
   }, p.title)))))), /*#__PURE__*/React.createElement(CTABand, {
     whatsapp: WA,
     title: "Like what you see?",
-    text: "Tell us what you\u2019d like made and we\u2019ll quote it, usually within a day."
+    text: "Tell us what you\u2019d like made and we\u2019ll prepare a quotation after reviewing your requirements."
   }), /*#__PURE__*/React.createElement(Footer, {
     whatsapp: WA
   }), /*#__PURE__*/React.createElement(WhatsAppButton, {
     phone: WA,
     floating: true,
-    message: "Hi Nosibele, I'd like to chat about an order."
+    message: window.NB_CONFIG && window.NB_CONFIG.waMessages ? window.NB_CONFIG.waMessages.general : "Hello Nosibele Design & Embroidery, I would like to enquire about your services."
   }), /*#__PURE__*/React.createElement(BackToTop, null), light && /*#__PURE__*/React.createElement("div", {
     onClick: () => setLight(null),
+    role: "dialog",
+    "aria-modal": "true",
+    "aria-label": light.title || 'Gallery image',
     style: {
       position: 'fixed',
       inset: 0,
@@ -3070,12 +3373,33 @@ function GalleryPage() {
       width: '100%',
       display: 'grid',
       gridTemplateColumns: 'minmax(0,1.1fr) minmax(0,1fr)',
-      boxShadow: 'var(--shadow-xl)'
+      boxShadow: 'var(--shadow-xl)',
+      position: 'relative'
     },
     className: "nb-light"
-  }, /*#__PURE__*/React.createElement("img", {
+  }, /*#__PURE__*/React.createElement("button", {
+    ref: closeRef,
+    type: "button",
+    onClick: () => setLight(null),
+    "aria-label": "Close image",
+    className: "nb-light__close",
+    style: {
+      position: 'absolute',
+      top: 10,
+      right: 10,
+      zIndex: 2,
+      minWidth: 44,
+      minHeight: 44,
+      borderRadius: 12,
+      border: '1px solid var(--border-soft)',
+      background: 'var(--surface-card)',
+      cursor: 'pointer',
+      fontWeight: 700
+    }
+  }, "Close"), /*#__PURE__*/React.createElement("img", {
     src: light.img,
     alt: light.alt || light.title,
+    loading: "eager",
     style: {
       width: '100%',
       height: '100%',
@@ -3150,12 +3474,15 @@ function ContactPage() {
     s = C.socials || {};
   const params = new URLSearchParams(location.search);
   const preItem = params.get('item') || '';
+  const [mapActive, setMapActive] = React.useState(false);
   const cardS = {
     background: 'var(--surface-card)',
     borderRadius: 'var(--radius-card)',
     border: '1px solid var(--border-hairline)',
     boxShadow: 'var(--shadow-sm)',
-    padding: 'var(--space-6)'
+    padding: 'var(--space-6)',
+    minWidth: 0,
+    textAlign: 'left'
   };
   const eyeS = {
     fontSize: 'var(--fs-overline)',
@@ -3169,49 +3496,64 @@ function ContactPage() {
     fontWeight: 600,
     fontSize: 'var(--fs-h3)',
     color: 'var(--text-strong)',
-    margin: '8px 0 6px'
+    margin: '8px 0 6px',
+    overflowWrap: 'anywhere',
+    wordBreak: 'break-word'
   };
   const subS = {
     fontSize: 'var(--fs-small)',
     lineHeight: 'var(--lh-normal)',
     color: 'var(--text-body)',
-    margin: 0
+    margin: 0,
+    overflowWrap: 'anywhere'
   };
   const linkS = {
     color: 'var(--crimson-500)',
     textDecoration: 'none',
-    fontWeight: 600
+    fontWeight: 600,
+    overflowWrap: 'anywhere'
   };
   const faqs = [{
     q: 'How do I get a quote?',
-    a: 'Fill in the form below or message us on WhatsApp with what you’d like, roughly how many pieces, and your logo or artwork. We’ll reply with a tailored quote, usually within a day.'
+    a: 'Fill in the form below or message us on WhatsApp with what you’d like, roughly how many pieces, and your logo or artwork. We’ll reply with a tailored quotation after reviewing your requirements.'
   }, {
     q: 'What’s your turnaround time?',
-    a: 'Most orders are ready in 7–10 working days once the design is approved. Larger or more complex orders may take a little longer — we’ll always confirm upfront.'
+    a: 'Lead times depend on quantity, method and current studio workload. Typical timing is discussed with you and confirmed on your quotation after artwork approval.'
   }, {
     q: 'Do you handle bulk and corporate orders?',
     a: 'Yes. Uniforms, workwear, team kit and corporate branding are a big part of what we do. Bulk pricing depends on garment, quantity and branding method.'
   }, {
     q: 'Can you work from my own logo or artwork?',
-    a: 'Absolutely. Send us a PNG, JPG or PDF and we’ll digitise it for embroidery or prepare it for print. We can also design artwork from scratch.'
+    a: 'Yes. Send a PNG, JPG or PDF by WhatsApp or email after your quotation request (website upload is disabled for security). We’ll digitise it for embroidery or prepare it for print, or design artwork from scratch if needed.'
   }, {
     q: 'Embroidery, sublimation or DTF — which do I need?',
     a: 'Embroidery is premium thread branding for logos and names. Sublimation prints edge-to-edge colour into the fabric. DTF transfers crisp, detailed full-colour designs onto a garment. Not sure? We’ll advise the best fit.'
   }];
   return /*#__PURE__*/React.createElement("div", {
+    className: "nb-contact-page",
     style: {
       background: 'var(--bg-page)',
       minHeight: '100vh'
     }
-  }, /*#__PURE__*/React.createElement(Nav, {
+  }, /*#__PURE__*/React.createElement("a", {
+    className: "nb-skip-react",
+    href: "#main",
+    style: {
+      position: 'absolute',
+      left: -9999,
+      top: 0
+    }
+  }, "Skip to content"), /*#__PURE__*/React.createElement(Nav, {
     current: "contact",
     whatsapp: WA
   }), /*#__PURE__*/React.createElement(PageHero, {
     eyebrow: "Contact",
     tone: "cream",
-    title: "Let\u2019s start your order",
-    subtitle: "Visit our Durban studio, call us, or send your details below \u2014 we\u2019ll bring your idea to thread."
+    title: "Let\u2019s talk about your order",
+    subtitle: "Visit our Durban studio, call us, or request a quotation below \u2014 submitting the form is a request for a quote, not an accepted order."
   }), /*#__PURE__*/React.createElement("section", {
+    className: "nb-contact",
+    "aria-label": "Contact details and studio map",
     style: {
       maxWidth: 'var(--container-xl)',
       margin: '0 auto',
@@ -3220,19 +3562,20 @@ function ContactPage() {
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'grid',
-      gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.1fr)',
+      gridTemplateColumns: 'minmax(0,1fr) minmax(0,1.15fr)',
       gap: 'clamp(24px,4vw,56px)',
       alignItems: 'start'
     },
-    className: "nb-2col"
+    className: "nb-2col nb-contact__grid"
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
+      gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)',
       gap: 'clamp(14px,1.6vw,20px)'
     },
-    className: "nb-info"
+    className: "nb-info nb-contact__cards"
   }, /*#__PURE__*/React.createElement("div", {
+    className: "nb-contact-card",
     style: cardS
   }, /*#__PURE__*/React.createElement("div", {
     style: eyeS
@@ -3242,19 +3585,20 @@ function ContactPage() {
     href: C.phoneHref || 'tel:+27614453680',
     style: {
       color: 'inherit',
-      textDecoration: 'none'
+      textDecoration: 'none',
+      whiteSpace: 'nowrap'
     }
   }, C.phone || '061 445 3680')), /*#__PURE__*/React.createElement("p", {
     style: subS
   }, "Tap to call, or message us on WhatsApp.")), /*#__PURE__*/React.createElement("div", {
+    className: "nb-contact-card",
     style: cardS
   }, /*#__PURE__*/React.createElement("div", {
     style: eyeS
   }, "Email"), /*#__PURE__*/React.createElement("div", {
     style: {
       ...valS,
-      fontSize: '1.05rem',
-      wordBreak: 'break-word'
+      fontSize: '1.05rem'
     }
   }, /*#__PURE__*/React.createElement("a", {
     href: 'mailto:' + (e.info || ''),
@@ -3268,6 +3612,7 @@ function ContactPage() {
     href: 'mailto:' + (e.quotes || ''),
     style: linkS
   }, e.quotes))), /*#__PURE__*/React.createElement("div", {
+    className: "nb-contact-card",
     style: cardS
   }, /*#__PURE__*/React.createElement("div", {
     style: eyeS
@@ -3284,10 +3629,12 @@ function ContactPage() {
     rel: "noopener noreferrer",
     style: linkS
   }, "Get directions \u2192"))), /*#__PURE__*/React.createElement("div", {
+    className: "nb-contact-card",
     style: cardS
   }, /*#__PURE__*/React.createElement("div", {
     style: eyeS
   }, "Business hours"), /*#__PURE__*/React.createElement("ul", {
+    className: "nb-contact-hours",
     style: {
       listStyle: 'none',
       padding: 0,
@@ -3308,9 +3655,11 @@ function ContactPage() {
   }, /*#__PURE__*/React.createElement("span", null, d), /*#__PURE__*/React.createElement("span", {
     style: {
       fontWeight: 600,
+      flex: 'none',
       color: h === 'Closed' ? 'var(--crimson-500)' : 'var(--text-strong)'
     }
   }, h))))), /*#__PURE__*/React.createElement("div", {
+    className: "nb-contact-card nb-contact-card--social",
     style: {
       ...cardS,
       gridColumn: '1 / -1',
@@ -3353,29 +3702,47 @@ function ContactPage() {
   }, /*#__PURE__*/React.createElement(SocialIcon, {
     kind: k
   })))))), /*#__PURE__*/React.createElement("div", {
+    className: 'nb-contact-map' + (mapActive ? ' is-active' : ''),
     style: {
+      position: 'relative',
       borderRadius: 'var(--radius-xl)',
       overflow: 'hidden',
       boxShadow: 'var(--shadow-lg)',
       border: '1px solid var(--border-hairline)',
-      minHeight: 420,
-      height: '100%'
+      width: '100%',
+      maxWidth: '100%',
+      minHeight: 360,
+      height: 'min(520px, 70vh)',
+      alignSelf: 'stretch'
     }
   }, /*#__PURE__*/React.createElement("iframe", {
-    title: "Nosibele studio location",
+    title: "Nosibele Design and Embroidery studio location on Google Maps",
     src: a.embed,
     width: "100%",
     height: "100%",
     style: {
       border: 0,
       display: 'block',
-      minHeight: 420,
-      filter: 'saturate(0.92)'
+      width: '100%',
+      height: '100%',
+      filter: 'saturate(0.92)',
+      pointerEvents: mapActive ? 'auto' : 'none'
     },
     loading: "lazy",
     referrerPolicy: "no-referrer-when-downgrade",
-    allowFullScreen: true
-  })))), /*#__PURE__*/React.createElement(QuoteSection, {
+    allowFullScreen: true,
+    tabIndex: mapActive ? 0 : -1
+  }), !mapActive && /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    className: "nb-contact-map__overlay",
+    onClick: () => setMapActive(true),
+    "aria-label": "Tap to interact with map"
+  }, /*#__PURE__*/React.createElement("span", null, "Tap to interact with map")), /*#__PURE__*/React.createElement("a", {
+    className: "nb-contact-map__directions",
+    href: a.maps,
+    target: "_blank",
+    rel: "noopener noreferrer"
+  }, "Get directions")))), /*#__PURE__*/React.createElement(QuoteSection, {
     preselect: preItem,
     whatsapp: WA
   }), /*#__PURE__*/React.createElement("section", {
@@ -3392,8 +3759,45 @@ function ContactPage() {
   }), /*#__PURE__*/React.createElement(WhatsAppButton, {
     phone: WA,
     floating: true,
-    message: C.waMessage ? C.waMessage() : 'Hello Nosibele Design & Embroidery, I would like a quotation.'
-  }), /*#__PURE__*/React.createElement(BackToTop, null), /*#__PURE__*/React.createElement("style", null, `.nb-soc:hover{ background: var(--gold-500); color: var(--charcoal-900) !important; border-color: var(--gold-500); } @media (max-width: 860px){ .nb-2col{ grid-template-columns: 1fr; } }`));
+    message: C.waMessages ? C.waMessages.general : 'Hello Nosibele Design & Embroidery, I would like to enquire about your services.'
+  }), /*#__PURE__*/React.createElement(BackToTop, null), /*#__PURE__*/React.createElement("style", null, `
+.nb-soc:hover{ background: var(--gold-500); color: var(--charcoal-900) !important; border-color: var(--gold-500); }
+.nb-contact-map__overlay{
+  position:absolute; inset:0; z-index:2; border:0; cursor:pointer;
+  display:flex; align-items:flex-end; justify-content:center;
+  padding:16px; background:linear-gradient(180deg, transparent 45%, rgba(34,29,26,.45) 100%);
+  color:#fffdf8; font: inherit; font-weight:700; font-size:.95rem;
+}
+.nb-contact-map__overlay span{
+  background:rgba(34,29,26,.82); border:1px solid rgba(200,161,74,.55);
+  border-radius:999px; padding:10px 16px; min-height:44px; display:inline-flex; align-items:center;
+}
+.nb-contact-map__directions{
+  position:absolute; top:12px; left:12px; z-index:3;
+  background:var(--surface-card); color:var(--crimson-600); font-weight:700; font-size:.85rem;
+  text-decoration:none; border:1px solid var(--border-hairline); border-radius:999px;
+  padding:8px 12px; min-height:40px; display:inline-flex; align-items:center;
+  box-shadow:var(--shadow-sm);
+}
+.nb-contact-map.is-active .nb-contact-map__overlay{ display:none; }
+@media (max-width: 1023px){
+  .nb-contact__grid.nb-2col{ grid-template-columns: 1fr !important; }
+  .nb-contact-map{
+    height: 340px !important; min-height: 320px !important; max-height: 380px !important;
+    width: 100% !important; max-width: 100% !important; position: relative !important;
+  }
+}
+@media (max-width: 768px){
+  .nb-contact__cards.nb-info{ grid-template-columns: minmax(0,1fr) minmax(0,1fr) !important; }
+}
+@media (max-width: 480px){
+  .nb-contact__cards.nb-info{ grid-template-columns: 1fr !important; }
+  .nb-contact-card--social{ flex-direction: column; align-items: flex-start !important; }
+}
+@media (min-width: 1024px){
+  .nb-contact__grid.nb-2col{ grid-template-columns: minmax(280px,1fr) minmax(320px,1.15fr); }
+}
+`));
 }
 Object.assign(window, {
   ContactPage
