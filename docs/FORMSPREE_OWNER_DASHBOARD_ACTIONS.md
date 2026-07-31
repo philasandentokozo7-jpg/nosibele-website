@@ -23,13 +23,16 @@
 
 Complete these in Formspree — they cannot be finished from the repo alone:
 
-1. **Confirm notification email** delivers to `quotes@nosibeleembroidery.co.za` (or the inbox you want).
+1. **Set notification email** to `quotes@nosibeleembroidery.co.za` (required for quote-form routing).
+   - Formspree dashboard → select the Nosibele quote form (`maqgekdl`) → notification settings → destination email → `quotes@nosibeleembroidery.co.za`
 2. **Restrict form to your domain** (allow `www.nosibeleembroidery.co.za` / `nosibeleembroidery.co.za` only) if the plan supports it.
 3. **Enable spam filtering / CAPTCHA** if offered on your Formspree plan. Do not state on the website that CAPTCHA is on until it is actually enabled.
 4. **Review reCAPTCHA / hCaptcha** settings after enabling; retest the live form.
 5. **Set a monthly submission alert** so abuse is noticed quickly.
 6. **Do not store card numbers** in Formspree replies — if a customer pastes one, delete and ask them to use a secure payment channel you confirm offline.
 7. After deploy, send one **TEST** submission and delete it from the Formspree inbox.
+
+**Status:** The website form posts to Formspree endpoint `maqgekdl` and copy tells customers to use `quotes@` / `artwork@`. The Formspree inbox destination **cannot** be changed from this repository — complete step 1 in the dashboard.
 
 ## What not to claim publicly
 

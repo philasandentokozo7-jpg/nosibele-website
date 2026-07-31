@@ -187,7 +187,7 @@ const NEW_ARTWORK_BLOCK = `  }, "Finishing touches"), /*#__PURE__*/React.createE
       fontWeight: 700
     }
   }, (window.NB_CONFIG && window.NB_CONFIG.phone) || '061 445 3680'), ") or email ", /*#__PURE__*/React.createElement("a", {
-    href: "mailto:artwork@nosibeleembroidery.co.za",
+    href: "mailto:artwork@nosibeleembroidery.co.za?subject=Artwork%20for%20Quotation",
     style: {
       color: 'var(--crimson-600)',
       fontWeight: 700

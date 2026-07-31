@@ -1853,7 +1853,7 @@ function QuoteSection({
       data.append('Marketing opt-in', fd.get('marketing_opt_in') ? 'Yes' : 'No');
       data.append('_gotcha', '');
       data.append('Artwork delivery', 'Customer will send artwork separately via WhatsApp or email (website upload disabled)');
-      data.append('_subject', 'New quote request');
+      data.append('_subject', 'Nosibele quotation request');
       const res = await fetch(endpoint, {
         method: 'POST',
         body: data,
@@ -1865,7 +1865,7 @@ function QuoteSection({
       try { if (typeof window.nbTrack === 'function') window.nbTrack('quote_submit', { item: product ? 'set' : 'unset' }); } catch (t) {}
     } catch (err) {
       try { if (typeof window.nbTrack === 'function') window.nbTrack('form_error', { form: 'quote' }); } catch (t) {}
-      setError('We could not send your request just now. Please try WhatsApp, email or telephone instead.');
+      setError('We could not send your request just now. Please WhatsApp us on 061 445 3680, email quotes@nosibeleembroidery.co.za, or call us — and we will help you.');
     } finally {
       setSubmitting(false);
     }
@@ -2216,12 +2216,12 @@ function QuoteSection({
       fontWeight: 700
     }
   }, (window.NB_CONFIG && window.NB_CONFIG.phone) || '061 445 3680'), ") or email ", /*#__PURE__*/React.createElement("a", {
-    href: "mailto:artwork@nosibeleembroidery.co.za",
+    href: "mailto:" + ((window.NB_CONFIG && window.NB_CONFIG.emails && window.NB_CONFIG.emails.artwork) || 'artwork@nosibeleembroidery.co.za') + "?subject=Artwork%20for%20Quotation",
     style: {
       color: 'var(--crimson-600)',
       fontWeight: 700
     }
-  }, "artwork@nosibeleembroidery.co.za"), ". Artwork is used only to prepare your quotation and, if you proceed, your order.")), /*#__PURE__*/React.createElement("label", {
+  }, (window.NB_CONFIG && window.NB_CONFIG.emails && window.NB_CONFIG.emails.artwork) || 'artwork@nosibeleembroidery.co.za'), ". Artwork is used only to prepare your quotation and, if you proceed, your order. Confirmed-order updates go to orders@nosibeleembroidery.co.za; invoices and payment queries go to accounts@nosibeleembroidery.co.za.")), /*#__PURE__*/React.createElement("label", {
     className: "nbq-f",
     style: {
       marginTop: 14
@@ -2588,10 +2588,14 @@ function Footer({
     className: "nb-foot-link",
     style: linkS
   }, C.phone || '061 445 3680'), /*#__PURE__*/React.createElement("a", {
-    href: 'mailto:' + (e.info || 'info@nosibeleembroidery.co.za'),
+    href: 'mailto:' + (e.info || 'info@nosibeleembroidery.co.za') + '?subject=General%20Enquiry',
     className: "nb-foot-link",
     style: linkS
-  }, e.info || 'info@nosibeleembroidery.co.za')), /*#__PURE__*/React.createElement("div", {
+  }, e.info || 'info@nosibeleembroidery.co.za'), /*#__PURE__*/React.createElement("a", {
+    href: 'mailto:' + (e.quotes || 'quotes@nosibeleembroidery.co.za') + '?subject=Quotation%20Request',
+    className: "nb-foot-link",
+    style: linkS
+  }, e.quotes || 'quotes@nosibeleembroidery.co.za')), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       gap: 10,
@@ -3551,7 +3555,10 @@ function ContactPage() {
     a: 'Yes. Uniforms, workwear, team kit and corporate branding are a big part of what we do. Bulk pricing depends on garment, quantity and branding method.'
   }, {
     q: 'Can you work from my own logo or artwork?',
-    a: 'Yes. Send a PNG, JPG or PDF by WhatsApp or email after your quotation request (website upload is disabled for security). We’ll digitise it for embroidery or prepare it for print, or design artwork from scratch if needed.'
+    a: 'Yes. Send a PNG, JPG or PDF to artwork@nosibeleembroidery.co.za or by WhatsApp after your quotation request (website upload is disabled for security). We’ll digitise it for embroidery or prepare it for print, or design artwork from scratch if needed.'
+  }, {
+    q: 'How do I follow up on a confirmed order or payment?',
+    a: 'For order updates, collection or delivery queries, email orders@nosibeleembroidery.co.za. For invoices, payments or account queries, email accounts@nosibeleembroidery.co.za.'
   }, {
     q: 'Embroidery, sublimation or DTF — which do I need?',
     a: 'Embroidery is premium thread branding for logos and names. Sublimation prints edge-to-edge colour into the fabric. DTF transfers crisp, detailed full-colour designs onto a garment. Not sure? We’ll advise the best fit.'
@@ -3619,26 +3626,53 @@ function ContactPage() {
     style: subS
   }, "Tap to call, or message us on WhatsApp.")), /*#__PURE__*/React.createElement("div", {
     className: "nb-contact-card",
-    style: cardS
+    style: {
+      ...cardS,
+      gridColumn: '1 / -1'
+    }
   }, /*#__PURE__*/React.createElement("div", {
     style: eyeS
-  }, "Email"), /*#__PURE__*/React.createElement("div", {
+  }, "Email"), /*#__PURE__*/React.createElement("p", {
     style: {
-      ...valS,
-      fontSize: '1.05rem'
+      ...subS,
+      marginTop: 10
     }
-  }, /*#__PURE__*/React.createElement("a", {
-    href: 'mailto:' + (e.info || ''),
-    style: {
-      color: 'inherit',
-      textDecoration: 'none'
-    }
-  }, e.info)), /*#__PURE__*/React.createElement("p", {
-    style: subS
-  }, "Quotes: ", /*#__PURE__*/React.createElement("a", {
-    href: 'mailto:' + (e.quotes || ''),
+  }, "General enquiries: ", /*#__PURE__*/React.createElement("a", {
+    href: 'mailto:' + (e.info || 'info@nosibeleembroidery.co.za') + '?subject=General%20Enquiry',
     style: linkS
-  }, e.quotes))), /*#__PURE__*/React.createElement("div", {
+  }, e.info || 'info@nosibeleembroidery.co.za')), /*#__PURE__*/React.createElement("p", {
+    style: {
+      ...subS,
+      marginTop: 6
+    }
+  }, "Quotation requests: ", /*#__PURE__*/React.createElement("a", {
+    href: 'mailto:' + (e.quotes || 'quotes@nosibeleembroidery.co.za') + '?subject=Quotation%20Request',
+    style: linkS
+  }, e.quotes || 'quotes@nosibeleembroidery.co.za')), /*#__PURE__*/React.createElement("p", {
+    style: {
+      ...subS,
+      marginTop: 6
+    }
+  }, "Send logos and artwork to ", /*#__PURE__*/React.createElement("a", {
+    href: 'mailto:' + (e.artwork || 'artwork@nosibeleembroidery.co.za') + '?subject=Artwork%20for%20Quotation',
+    style: linkS
+  }, e.artwork || 'artwork@nosibeleembroidery.co.za')), /*#__PURE__*/React.createElement("p", {
+    style: {
+      ...subS,
+      marginTop: 6
+    }
+  }, "For order updates, email ", /*#__PURE__*/React.createElement("a", {
+    href: 'mailto:' + (e.orders || 'orders@nosibeleembroidery.co.za') + '?subject=Order%20Enquiry',
+    style: linkS
+  }, e.orders || 'orders@nosibeleembroidery.co.za')), /*#__PURE__*/React.createElement("p", {
+    style: {
+      ...subS,
+      marginTop: 6
+    }
+  }, "For invoices or payment queries, email ", /*#__PURE__*/React.createElement("a", {
+    href: 'mailto:' + (e.accounts || 'accounts@nosibeleembroidery.co.za') + '?subject=Payment%20or%20Invoice%20Query',
+    style: linkS
+  }, e.accounts || 'accounts@nosibeleembroidery.co.za'))), /*#__PURE__*/React.createElement("div", {
     className: "nb-contact-card",
     style: cardS
   }, /*#__PURE__*/React.createElement("div", {

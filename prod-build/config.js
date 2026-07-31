@@ -46,18 +46,15 @@ window.NB_CONFIG = {
     ['Sunday', 'Closed'],
   ],
 
+  /* Confirmed active mailboxes only — do not invent extra addresses. */
   emails: {
-    primary: 'hello@nosibeleembroidery.co.za',
+    primary: 'info@nosibeleembroidery.co.za',
     info: 'info@nosibeleembroidery.co.za',
-    sales: 'sales@nosibeleembroidery.co.za',
     quotes: 'quotes@nosibeleembroidery.co.za',
-    support: 'support@nosibeleembroidery.co.za',
-    orders: 'orders@nosibeleembroidery.co.za',
     artwork: 'artwork@nosibeleembroidery.co.za',
+    orders: 'orders@nosibeleembroidery.co.za',
     accounts: 'accounts@nosibeleembroidery.co.za',
-    admin: 'admin@nosibeleembroidery.co.za',
-    careers: 'careers@nosibeleembroidery.co.za',
-    /* Dedicated addresses — null until owner confirms a distinct inbox */
+    /* Optional dedicated aliases — null until confirmed separately */
     privacy: null,
     complaints: null,
     legalNotices: null,
