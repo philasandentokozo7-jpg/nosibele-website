@@ -2964,10 +2964,14 @@ function Footer({
     className: "nb-foot-link",
     style: linkS
   }, C.phone || '061 445 3680'), /*#__PURE__*/React.createElement("a", {
-    href: 'mailto:' + (e.info || 'info@nosibeleembroidery.co.za'),
+    href: 'mailto:' + (e.info || 'info@nosibeleembroidery.co.za') + '?subject=General%20Enquiry',
     className: "nb-foot-link",
     style: linkS
-  }, e.info || 'info@nosibeleembroidery.co.za')), /*#__PURE__*/React.createElement("div", {
+  }, e.info || 'info@nosibeleembroidery.co.za'), /*#__PURE__*/React.createElement("a", {
+    href: 'mailto:' + (e.quotes || 'quotes@nosibeleembroidery.co.za') + '?subject=Quotation%20Request',
+    className: "nb-foot-link",
+    style: linkS
+  }, e.quotes || 'quotes@nosibeleembroidery.co.za')), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       gap: 10,
@@ -4197,16 +4201,12 @@ window.NB_CONFIG = {
   },
   hours: [['Monday – Friday', '08:00 – 17:00'], ['Saturday', '08:00 – 13:00'], ['Sunday', 'Closed']],
   emails: {
-    primary: 'hello@nosibeleembroidery.co.za',
+    primary: 'info@nosibeleembroidery.co.za',
     info: 'info@nosibeleembroidery.co.za',
-    sales: 'sales@nosibeleembroidery.co.za',
     quotes: 'quotes@nosibeleembroidery.co.za',
-    support: 'support@nosibeleembroidery.co.za',
-    orders: 'orders@nosibeleembroidery.co.za',
     artwork: 'artwork@nosibeleembroidery.co.za',
-    accounts: 'accounts@nosibeleembroidery.co.za',
-    admin: 'admin@nosibeleembroidery.co.za',
-    careers: 'careers@nosibeleembroidery.co.za'
+    orders: 'orders@nosibeleembroidery.co.za',
+    accounts: 'accounts@nosibeleembroidery.co.za'
   },
   socials: {
     tiktok: {
@@ -5252,10 +5252,14 @@ function Footer({
     className: "nb-foot-link",
     style: linkS
   }, C.phone || '061 445 3680'), /*#__PURE__*/React.createElement("a", {
-    href: 'mailto:' + (e.info || 'info@nosibeleembroidery.co.za'),
+    href: 'mailto:' + (e.info || 'info@nosibeleembroidery.co.za') + '?subject=General%20Enquiry',
     className: "nb-foot-link",
     style: linkS
-  }, e.info || 'info@nosibeleembroidery.co.za')), /*#__PURE__*/React.createElement("div", {
+  }, e.info || 'info@nosibeleembroidery.co.za'), /*#__PURE__*/React.createElement("a", {
+    href: 'mailto:' + (e.quotes || 'quotes@nosibeleembroidery.co.za') + '?subject=Quotation%20Request',
+    className: "nb-foot-link",
+    style: linkS
+  }, e.quotes || 'quotes@nosibeleembroidery.co.za')), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       gap: 10,
@@ -7979,16 +7983,12 @@ window.NB_CONFIG = {
   },
   hours: [['Monday – Friday', '08:00 – 17:00'], ['Saturday', '08:00 – 13:00'], ['Sunday', 'Closed']],
   emails: {
-    primary: 'hello@nosibeleembroidery.co.za',
+    primary: 'info@nosibeleembroidery.co.za',
     info: 'info@nosibeleembroidery.co.za',
-    sales: 'sales@nosibeleembroidery.co.za',
     quotes: 'quotes@nosibeleembroidery.co.za',
-    support: 'support@nosibeleembroidery.co.za',
-    orders: 'orders@nosibeleembroidery.co.za',
     artwork: 'artwork@nosibeleembroidery.co.za',
-    accounts: 'accounts@nosibeleembroidery.co.za',
-    admin: 'admin@nosibeleembroidery.co.za',
-    careers: 'careers@nosibeleembroidery.co.za'
+    orders: 'orders@nosibeleembroidery.co.za',
+    accounts: 'accounts@nosibeleembroidery.co.za'
   },
   socials: {
     tiktok: {
