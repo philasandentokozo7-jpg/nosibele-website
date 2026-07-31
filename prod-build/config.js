@@ -121,8 +121,8 @@ window.NB_CONFIG = {
 
   /* Quote form delivery — Formspree (sends submissions to quotes@nosibeleembroidery.co.za). */
   formEndpoint: 'https://formspree.io/f/maqgekdl',
-  /* Website form does not accept file uploads (security). Artwork via WhatsApp/email. */
-  artworkUploadEnabled: false,
+  /* Quote form accepts PNG/JPG/PDF artwork as Formspree attachments (client-validated). */
+  artworkUploadEnabled: true,
   artworkAccept: ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'],
   artworkMaxBytes: 8 * 1024 * 1024,
 

@@ -1796,9 +1796,71 @@ function QuoteSection({
   const [lead, setLead] = React.useState(null);
   const [submitting, setSubmitting] = React.useState(false);
   const [error, setError] = React.useState('');
+  const [artworkFiles, setArtworkFiles] = React.useState([]);
+  const [artworkHint, setArtworkHint] = React.useState('');
   const lastSubmitAt = React.useRef(0);
   const COOLDOWN_MS = 8000;
   const MAX = { name: 80, phone: 40, qty: 12, notes: 1000, source: 80, item: 120 };
+  const ALLOWED_MIME = (window.NB_CONFIG && window.NB_CONFIG.artworkAccept) || ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'];
+  const MAX_BYTES = (window.NB_CONFIG && window.NB_CONFIG.artworkMaxBytes) || (8 * 1024 * 1024);
+  const MAX_FILES = 3;
+  const readMagic = file => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('read'));
+    reader.onload = () => {
+      const buf = new Uint8Array(reader.result || []);
+      const isPng = buf.length >= 4 && buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4E && buf[3] === 0x47;
+      const isJpg = buf.length >= 3 && buf[0] === 0xFF && buf[1] === 0xD8 && buf[2] === 0xFF;
+      const isPdf = buf.length >= 4 && buf[0] === 0x25 && buf[1] === 0x50 && buf[2] === 0x44 && buf[3] === 0x46;
+      resolve({ isPng, isJpg, isPdf });
+    };
+    reader.readAsArrayBuffer(file.slice(0, 8));
+  });
+  const validateArtworkFiles = async files => {
+    const list = Array.from(files || []).slice(0, MAX_FILES);
+    const ok = [];
+    for (const file of list) {
+      const name = String(file.name || '').toLowerCase();
+      const extOk = /\.(png|jpe?g|pdf)$/.test(name);
+      const mime = String(file.type || '').toLowerCase();
+      const mimeOk = !mime || ALLOWED_MIME.indexOf(mime) !== -1 || mime === 'image/jpg';
+      if (!extOk || !mimeOk) {
+        return { error: 'Artwork must be PNG, JPG or PDF only.', files: [] };
+      }
+      if (file.size > MAX_BYTES) {
+        return { error: 'Each artwork file must be 8 MB or smaller.', files: [] };
+      }
+      try {
+        const mag = await readMagic(file);
+        const looksImage = mag.isPng || mag.isJpg;
+        const looksPdf = mag.isPdf;
+        if (!(looksImage || looksPdf)) {
+          return { error: 'That file type is not allowed. Please upload PNG, JPG or PDF artwork.', files: [] };
+        }
+        if (looksPdf && !name.endsWith('.pdf')) {
+          return { error: 'PDF artwork must use a .pdf filename.', files: [] };
+        }
+        if (looksImage && !/\.(png|jpe?g)$/.test(name)) {
+          return { error: 'Image artwork must use a .png, .jpg or .jpeg filename.', files: [] };
+        }
+      } catch (err) {
+        return { error: 'We could not read that artwork file. Please try another PNG, JPG or PDF.', files: [] };
+      }
+      ok.push(file);
+    }
+    return { error: '', files: ok };
+  };
+  const onArtworkChange = async ev => {
+    const result = await validateArtworkFiles(ev.target.files);
+    if (result.error) {
+      setArtworkFiles([]);
+      setArtworkHint(result.error);
+      ev.target.value = '';
+      return;
+    }
+    setArtworkFiles(result.files);
+    setArtworkHint(result.files.length ? (result.files.length + ' file(s) ready to attach with your quotation request.') : '');
+  };
   React.useEffect(() => {
     if (preselect) setItem(preselect.replace(/\s#\d+$/, '').slice(0, MAX.item));
   }, [preselect]);
@@ -1830,6 +1892,15 @@ function QuoteSection({
       setError('Please confirm you have read the Privacy Notice and Quotation & Order Terms before sending.');
       return;
     }
+    const picked = fd.getAll('artwork');
+    const pickedFiles = picked.filter(v => v && typeof v === 'object' && v.size != null);
+    let filesToSend = artworkFiles;
+    if (pickedFiles.length) {
+      const checked = await validateArtworkFiles(pickedFiles);
+      if (checked.error) { setError(checked.error); return; }
+      filesToSend = checked.files;
+      setArtworkFiles(checked.files);
+    }
     const leadObj = { name: name.split(' ')[0] || '—', item: product || '—', qty: qty || '—', status: 'New' };
     const endpoint = window.NB_CONFIG && window.NB_CONFIG.formEndpoint;
     if (!endpoint) {
@@ -1852,8 +1923,15 @@ function QuoteSection({
       data.append('Commercial terms acknowledgement', 'Yes');
       data.append('Marketing opt-in', fd.get('marketing_opt_in') ? 'Yes' : 'No');
       data.append('_gotcha', '');
-      data.append('Artwork delivery', 'Customer will send artwork separately via WhatsApp or email (website upload disabled)');
-      data.append('_subject', 'Nosibele quotation request');
+      data.append('_subject', 'Nosibele quotation request' + (filesToSend.length ? ' (with artwork)' : ''));
+      if (filesToSend.length) {
+        filesToSend.forEach((file, idx) => {
+          data.append(idx === 0 ? 'attachment' : ('attachment_' + (idx + 1)), file, file.name);
+        });
+        data.append('Artwork attached', filesToSend.map(f => f.name).join(', '));
+      } else {
+        data.append('Artwork attached', 'None — customer may supply artwork later if needed');
+      }
       const res = await fetch(endpoint, {
         method: 'POST',
         body: data,
@@ -1875,6 +1953,8 @@ function QuoteSection({
     setItem('');
     setLead(null);
     setError('');
+    setArtworkFiles([]);
+    setArtworkHint('');
     setFulfilment('Collect from studio');
   };
   const waMsg = item
@@ -2208,71 +2288,55 @@ function QuoteSection({
     className: "nbq-f"
   }, /*#__PURE__*/React.createElement("span", {
     className: "nbq-l"
-  }, "Artwork or logo ", /*#__PURE__*/React.createElement("em", null, "(optional \u2014 send securely)")), /*#__PURE__*/React.createElement("div", {
-    className: "nbq-help nbq-email-routes",
+  }, "Artwork or logo ", /*#__PURE__*/React.createElement("em", null, "(optional \u2014 attach here)")), /*#__PURE__*/React.createElement("p", {
+    className: "nbq-help",
     style: {
-      margin: '10px 0 0',
-      padding: '12px 14px',
-      borderRadius: 'var(--radius-md)',
-      border: '1px solid rgba(200,161,74,0.45)',
-      background: 'rgba(255,255,255,0.92)',
+      margin: '8px 0 10px',
       fontSize: 'var(--fs-caption)',
-      color: 'var(--text-body)',
-      lineHeight: 1.55
+      color: 'var(--text-muted)',
+      lineHeight: 1.45
     }
-  }, /*#__PURE__*/React.createElement("p", {
+  }, "Attach your logo or artwork here so it arrives with this quotation request at quotes@nosibeleembroidery.co.za. PNG, JPG or PDF \u2014 up to 3 files, 8 MB each."), /*#__PURE__*/React.createElement("label", {
+    className: "nbq-file",
     style: {
-      margin: '0 0 8px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 8,
+      marginTop: 4,
+      padding: '14px 16px',
+      borderRadius: 'var(--radius-md)',
+      border: '1px dashed rgba(200,161,74,0.65)',
+      background: 'rgba(255,255,255,0.92)',
+      cursor: 'pointer'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
       fontWeight: 700,
-      color: 'var(--text-strong)'
+      color: 'var(--text-strong)',
+      fontSize: 'var(--fs-small)'
     }
-  }, "Where to email us"), /*#__PURE__*/React.createElement("p", {
+  }, "Choose artwork files"), /*#__PURE__*/React.createElement("input", {
+    type: "file",
+    name: "artwork",
+    accept: "image/png,image/jpeg,.png,.jpg,.jpeg,application/pdf,.pdf",
+    multiple: true,
+    onChange: onArtworkChange,
     style: {
-      margin: '0 0 6px'
+      fontSize: 'var(--fs-caption)',
+      color: 'var(--text-body)'
     }
-  }, "This quote form is for quotation requests (preferred inbox: ", /*#__PURE__*/React.createElement("a", {
-    href: "mailto:quotes@nosibeleembroidery.co.za?subject=Quotation%20Request",
+  }), artworkHint ? /*#__PURE__*/React.createElement("span", {
     style: {
-      color: 'var(--crimson-600)',
-      fontWeight: 700
+      fontSize: 'var(--fs-caption)',
+      color: artworkHint.indexOf('ready') !== -1 ? 'var(--text-strong)' : 'var(--crimson-600)',
+      fontWeight: 600
     }
-  }, "quotes@nosibeleembroidery.co.za"), ")."), /*#__PURE__*/React.createElement("p", {
+  }, artworkHint) : /*#__PURE__*/React.createElement("span", {
     style: {
-      margin: '0 0 6px'
+      fontSize: 'var(--fs-caption)',
+      color: 'var(--text-muted)'
     }
-  }, "Send logos and artwork to ", /*#__PURE__*/React.createElement("a", {
-    href: "mailto:artwork@nosibeleembroidery.co.za?subject=Artwork%20for%20Quotation",
-    style: {
-      color: 'var(--crimson-600)',
-      fontWeight: 700
-    }
-  }, "artwork@nosibeleembroidery.co.za"), " or WhatsApp ", /*#__PURE__*/React.createElement("a", {
-    href: (window.NB_CONFIG && window.NB_CONFIG.phoneHref) || 'tel:+27614453680',
-    style: {
-      color: 'var(--crimson-600)',
-      fontWeight: 700
-    }
-  }, (window.NB_CONFIG && window.NB_CONFIG.phone) || '061 445 3680'), " (PNG, JPG or PDF). Website file upload is disabled for security."), /*#__PURE__*/React.createElement("p", {
-    style: {
-      margin: '0 0 6px'
-    }
-  }, "For order updates, email ", /*#__PURE__*/React.createElement("a", {
-    href: "mailto:orders@nosibeleembroidery.co.za?subject=Order%20Enquiry",
-    style: {
-      color: 'var(--crimson-600)',
-      fontWeight: 700
-    }
-  }, "orders@nosibeleembroidery.co.za"), "."), /*#__PURE__*/React.createElement("p", {
-    style: {
-      margin: 0
-    }
-  }, "For invoices or payment queries, email ", /*#__PURE__*/React.createElement("a", {
-    href: "mailto:accounts@nosibeleembroidery.co.za?subject=Payment%20or%20Invoice%20Query",
-    style: {
-      color: 'var(--crimson-600)',
-      fontWeight: 700
-    }
-  }, "accounts@nosibeleembroidery.co.za"), "."))), /*#__PURE__*/React.createElement("label", {
+  }, "Optional. If you skip this now, we can still quote and request artwork later."))), /*#__PURE__*/React.createElement("label", {
     className: "nbq-f",
     style: {
       marginTop: 14
@@ -2352,7 +2416,7 @@ function QuoteSection({
       color: 'var(--crimson-600)',
       fontWeight: 700
     }
-  }, "Quotation & Order Terms"), ". I understand this is a quotation request only. Production starts only after an approved quotation, the required deposit (normally 50%), and confirmed artwork/order details. The balance is payable before collection or delivery.")), /*#__PURE__*/React.createElement("label", {
+  }, "Quotation & Order Terms"), ". I understand this is a quotation request only. Any artwork I attach must be files I am allowed to use. Production starts only after an approved quotation, the required deposit (normally 50%), and confirmed artwork/order details. The balance is payable before collection or delivery.")), /*#__PURE__*/React.createElement("label", {
     className: "nbq-check",
     style: {
       display: 'flex',
@@ -3606,7 +3670,7 @@ function ContactPage() {
     a: 'Yes. Uniforms, workwear, team kit and corporate branding are a big part of what we do. Bulk pricing depends on garment, quantity and branding method.'
   }, {
     q: 'Can you work from my own logo or artwork?',
-    a: 'Yes. Send a PNG, JPG or PDF to artwork@nosibeleembroidery.co.za or by WhatsApp after your quotation request (website upload is disabled for security). We’ll digitise it for embroidery or prepare it for print, or design artwork from scratch if needed.'
+    a: 'Yes. Attach PNG, JPG or PDF artwork on the quotation form so it arrives with your request at quotes@nosibeleembroidery.co.za. You can also send files later by WhatsApp if needed. We’ll digitise for embroidery or prepare for print, or design artwork from scratch if required.'
   }, {
     q: 'How do I follow up on a confirmed order or payment?',
     a: 'For order updates, collection or delivery queries, email orders@nosibeleembroidery.co.za. For invoices, payments or account queries, email accounts@nosibeleembroidery.co.za.'
@@ -3704,10 +3768,10 @@ function ContactPage() {
       ...subS,
       marginTop: 6
     }
-  }, "Send logos and artwork to ", /*#__PURE__*/React.createElement("a", {
-    href: 'mailto:' + (e.artwork || 'artwork@nosibeleembroidery.co.za') + '?subject=Artwork%20for%20Quotation',
+  }, "Attach logos and artwork on the quotation form (PNG, JPG or PDF) so they arrive with your request at ", /*#__PURE__*/React.createElement("a", {
+    href: 'mailto:' + (e.quotes || 'quotes@nosibeleembroidery.co.za') + '?subject=Quotation%20Request',
     style: linkS
-  }, e.artwork || 'artwork@nosibeleembroidery.co.za')), /*#__PURE__*/React.createElement("p", {
+  }, e.quotes || 'quotes@nosibeleembroidery.co.za'), "."), /*#__PURE__*/React.createElement("p", {
     style: {
       ...subS,
       marginTop: 6
