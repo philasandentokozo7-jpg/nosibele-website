@@ -6,10 +6,14 @@
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
+const crypto = require('crypto');
 const { JSDOM } = require('jsdom');
 
 const PB = path.join(__dirname, '..', 'prod-build');
 const SITE = 'https://www.nosibeleembroidery.co.za';
+
+/* Drop stale page duplicates from the design-system bundle before render. */
+require('./strip-nb-app-pages.js');
 
 const PAGES = [
   { file: 'index.html',    component: 'App',          loc: SITE + '/',              changefreq: 'weekly',  priority: '1.0' },
@@ -186,6 +190,55 @@ function writeSitemap(pageImages) {
   fs.writeFileSync(path.join(PB, 'sitemap.xml'), xml);
 }
 
+/* ---------- 5. Cache-bust CSS/JS so long-lived CDN/browser caches cannot pin stale UI ---------- */
+const VERSIONED_ASSETS = [
+  'styles.css',
+  'mobile.css',
+  'css/consent.css',
+  'css/legal.css',
+  'nb-app.js',
+  'config.js',
+  'catalogue.js',
+  'app.compiled.js',
+  'reveal.js',
+  'js/consent.js',
+  'js/analytics-events.js',
+  'vendor/react.production.min.js',
+  'vendor/react-dom.production.min.js',
+];
+
+function assetVersionMap() {
+  const map = {};
+  for (const rel of VERSIONED_ASSETS) {
+    const full = path.join(PB, rel);
+    if (!fs.existsSync(full)) continue;
+    map[rel] = crypto.createHash('sha256').update(fs.readFileSync(full)).digest('hex').slice(0, 10);
+  }
+  return map;
+}
+
+function applyAssetVersions() {
+  const versions = assetVersionMap();
+  const htmlFiles = fs.readdirSync(PB).filter((f) => f.endsWith('.html'));
+  for (const file of htmlFiles) {
+    let html = fs.readFileSync(path.join(PB, file), 'utf8');
+    let changed = false;
+    for (const [rel, ver] of Object.entries(versions)) {
+      const esc = rel.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      // Replace href/src for this asset, dropping any previous ?v=
+      const re = new RegExp(`((?:href|src)=")${esc}(?:\\?[^"]*)?(")`, 'g');
+      const next = html.replace(re, `$1${rel}?v=${ver}$2`);
+      if (next !== html) {
+        html = next;
+        changed = true;
+      }
+    }
+    if (changed) fs.writeFileSync(path.join(PB, file), html);
+  }
+  fs.writeFileSync(path.join(PB, 'asset-versions.json'), JSON.stringify(versions, null, 2) + '\n');
+  console.log('asset versions:', Object.keys(versions).length, 'files stamped into HTML');
+}
+
 /* ---------- run ---------- */
 const pageImages = {};
 let catalogueData = null;
@@ -198,5 +251,6 @@ for (const page of PAGES) {
 }
 injectProductsJsonLd(catalogueData);
 writeSitemap(pageImages);
+applyAssetVersions();
 console.log('products.html: ItemList JSON-LD injected');
 console.log('sitemap.xml: rewritten with image entries');
