@@ -1958,7 +1958,14 @@ function QuoteSection({
       margin: '18px 0 0',
       maxWidth: 420
     }
-  }, "A few details is all we need. Submitting this form is a request for a quotation \u2014 not an accepted order. We reply with a tailored quote after reviewing your requirements."), /*#__PURE__*/React.createElement("ul", {
+  }, "A few details is all we need. Submitting this form is a request for a quotation \u2014 not an accepted order. Quote requests are handled at ", /*#__PURE__*/React.createElement("a", {
+    href: "mailto:quotes@nosibeleembroidery.co.za?subject=Quotation%20Request",
+    style: {
+      color: 'var(--gold-pale)',
+      fontWeight: 700,
+      textDecoration: 'underline'
+    }
+  }, "quotes@nosibeleembroidery.co.za"), ". We reply with a tailored quote after reviewing your requirements."), /*#__PURE__*/React.createElement("ul", {
     style: {
       listStyle: 'none',
       padding: 0,
@@ -1967,7 +1974,7 @@ function QuoteSection({
       flexDirection: 'column',
       gap: 14
     }
-  }, ['A quotation request — no order until you approve', 'No obligation from sending the form', 'Talk to a real person in our Durban studio'].map(r => /*#__PURE__*/React.createElement("li", {
+  }, ['Quote requests go to quotes@nosibeleembroidery.co.za', 'A quotation request — no order until you approve', 'No obligation from sending the form', 'Talk to a real person in our Durban studio'].map(r => /*#__PURE__*/React.createElement("li", {
     key: r,
     style: {
       display: 'flex',
@@ -2201,27 +2208,71 @@ function QuoteSection({
     className: "nbq-f"
   }, /*#__PURE__*/React.createElement("span", {
     className: "nbq-l"
-  }, "Artwork or logo ", /*#__PURE__*/React.createElement("em", null, "(optional \u2014 send securely)")), /*#__PURE__*/React.createElement("p", {
-    className: "nbq-help",
+  }, "Artwork or logo ", /*#__PURE__*/React.createElement("em", null, "(optional \u2014 send securely)")), /*#__PURE__*/React.createElement("div", {
+    className: "nbq-help nbq-email-routes",
     style: {
-      margin: '8px 0 0',
+      margin: '10px 0 0',
+      padding: '12px 14px',
+      borderRadius: 'var(--radius-md)',
+      border: '1px solid rgba(200,161,74,0.45)',
+      background: 'rgba(255,255,255,0.92)',
       fontSize: 'var(--fs-caption)',
-      color: 'var(--text-muted)',
-      lineHeight: 1.45
+      color: 'var(--text-body)',
+      lineHeight: 1.55
     }
-  }, "For security, artwork files are not uploaded through this website form. After you send this quotation request, share PNG, JPG or PDF artwork by WhatsApp (", /*#__PURE__*/React.createElement("a", {
+  }, /*#__PURE__*/React.createElement("p", {
+    style: {
+      margin: '0 0 8px',
+      fontWeight: 700,
+      color: 'var(--text-strong)'
+    }
+  }, "Where to email us"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      margin: '0 0 6px'
+    }
+  }, "This quote form is for quotation requests (preferred inbox: ", /*#__PURE__*/React.createElement("a", {
+    href: "mailto:quotes@nosibeleembroidery.co.za?subject=Quotation%20Request",
+    style: {
+      color: 'var(--crimson-600)',
+      fontWeight: 700
+    }
+  }, "quotes@nosibeleembroidery.co.za"), ")."), /*#__PURE__*/React.createElement("p", {
+    style: {
+      margin: '0 0 6px'
+    }
+  }, "Send logos and artwork to ", /*#__PURE__*/React.createElement("a", {
+    href: "mailto:artwork@nosibeleembroidery.co.za?subject=Artwork%20for%20Quotation",
+    style: {
+      color: 'var(--crimson-600)',
+      fontWeight: 700
+    }
+  }, "artwork@nosibeleembroidery.co.za"), " or WhatsApp ", /*#__PURE__*/React.createElement("a", {
     href: (window.NB_CONFIG && window.NB_CONFIG.phoneHref) || 'tel:+27614453680',
     style: {
       color: 'var(--crimson-600)',
       fontWeight: 700
     }
-  }, (window.NB_CONFIG && window.NB_CONFIG.phone) || '061 445 3680'), ") or email ", /*#__PURE__*/React.createElement("a", {
-    href: "mailto:" + ((window.NB_CONFIG && window.NB_CONFIG.emails && window.NB_CONFIG.emails.artwork) || 'artwork@nosibeleembroidery.co.za') + "?subject=Artwork%20for%20Quotation",
+  }, (window.NB_CONFIG && window.NB_CONFIG.phone) || '061 445 3680'), " (PNG, JPG or PDF). Website file upload is disabled for security."), /*#__PURE__*/React.createElement("p", {
+    style: {
+      margin: '0 0 6px'
+    }
+  }, "For order updates, email ", /*#__PURE__*/React.createElement("a", {
+    href: "mailto:orders@nosibeleembroidery.co.za?subject=Order%20Enquiry",
     style: {
       color: 'var(--crimson-600)',
       fontWeight: 700
     }
-  }, (window.NB_CONFIG && window.NB_CONFIG.emails && window.NB_CONFIG.emails.artwork) || 'artwork@nosibeleembroidery.co.za'), ". Artwork is used only to prepare your quotation and, if you proceed, your order. Confirmed-order updates go to orders@nosibeleembroidery.co.za; invoices and payment queries go to accounts@nosibeleembroidery.co.za.")), /*#__PURE__*/React.createElement("label", {
+  }, "orders@nosibeleembroidery.co.za"), "."), /*#__PURE__*/React.createElement("p", {
+    style: {
+      margin: 0
+    }
+  }, "For invoices or payment queries, email ", /*#__PURE__*/React.createElement("a", {
+    href: "mailto:accounts@nosibeleembroidery.co.za?subject=Payment%20or%20Invoice%20Query",
+    style: {
+      color: 'var(--crimson-600)',
+      fontWeight: 700
+    }
+  }, "accounts@nosibeleembroidery.co.za"), "."))), /*#__PURE__*/React.createElement("label", {
     className: "nbq-f",
     style: {
       marginTop: 14
