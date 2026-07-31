@@ -32,7 +32,14 @@ Complete these in Formspree — they cannot be finished from the repo alone:
 6. **Do not store card numbers** in Formspree replies — if a customer pastes one, delete and ask them to use a secure payment channel you confirm offline.
 7. After deploy, send one **TEST** submission and delete it from the Formspree inbox.
 
-**Status:** The website form posts to Formspree endpoint `maqgekdl` and copy tells customers to use `quotes@` / `artwork@`. The Formspree inbox destination **cannot** be changed from this repository — complete step 1 in the dashboard.
+**Status:** The website form posts to Formspree endpoint `maqgekdl` with optional PNG/JPG/PDF attachments. Copy routes customers to **`quotes@` only** for quotation requests (including artwork). The Formspree inbox destination and file-upload plan feature **cannot** be changed from this repository — complete the dashboard steps below.
+
+## File uploads (required for artwork attachments)
+
+1. Confirm your Formspree plan supports **file uploads**.
+2. In the form Workflow/settings, allow file fields / attachments for the quote form.
+3. Send a TEST submission with a small PNG and confirm the notification email to `quotes@nosibeleembroidery.co.za` includes the attachment.
+4. If uploads fail on a free plan, upgrade or enable the upload feature before advertising attachments publicly.
 
 ## What not to claim publicly
 
