@@ -57,31 +57,61 @@
 
 [[redirects]]
   from = "/products"
-  to = "/products.html"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/products.html"
+  to = "/"
   status = 301
   force = true
 
 [[redirects]]
   from = "/services"
-  to = "/services.html"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/services.html"
+  to = "/"
   status = 301
   force = true
 
 [[redirects]]
   from = "/gallery"
-  to = "/gallery.html"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/gallery.html"
+  to = "/"
   status = 301
   force = true
 
 [[redirects]]
   from = "/about"
-  to = "/about.html"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/about.html"
+  to = "/"
   status = 301
   force = true
 
 [[redirects]]
   from = "/contact"
-  to = "/contact.html"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/contact.html"
+  to = "/"
   status = 301
   force = true
 

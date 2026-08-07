@@ -178,7 +178,11 @@ function collectImages(renderedHtml) {
 
 function writeSitemap(pageImages) {
   const today = new Date().toISOString().slice(0, 10);
-  const urls = PAGES.map((p) => {
+  // The public catalogue, services, gallery, about and contact URLs redirect
+  // to the homepage. Keep only the canonical homepage in the sitemap so a
+  // rebuild cannot encourage Google to restore those separate search results.
+  const indexablePages = PAGES.filter((p) => p.file === 'index.html');
+  const urls = indexablePages.map((p) => {
     const imgs = (pageImages[p.file] || [])
       .map((i) => `    <image:image><image:loc>${xmlEscape(i.loc)}</image:loc><image:title>${xmlEscape(i.title)}</image:title></image:image>`)
       .join('\n');
