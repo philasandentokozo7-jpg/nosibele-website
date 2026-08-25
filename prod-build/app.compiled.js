@@ -208,7 +208,7 @@ function Nav({
       document.body.classList.remove('nb-nav-lock');
     };
   }, [open]);
-  const links = [['Home', '/', 'home'], ['Products', '#products', 'products'], ['Services', '#services', 'services'], ['Gallery', '#products', 'gallery'], ['About', '#about', 'about'], ['Contact', '#quote', 'contact']];
+  const links = [['Home', '/', 'home'], ['Products', 'products.html', 'products'], ['Services', 'services.html', 'services'], ['Gallery', 'gallery.html', 'gallery'], ['About', 'about.html', 'about'], ['Contact', 'contact.html', 'contact']];
   const solid = scrolled || open;
   const closeMenu = () => {
     setOpen(false);
@@ -291,7 +291,7 @@ function Nav({
   }, "Request a quote") : /*#__PURE__*/React.createElement(Button, {
     variant: "primary",
     as: "a",
-    href: "#quote"
+    href: "contact.html"
   }, "Request a quote")), /*#__PURE__*/React.createElement("button", {
     ref: burgerRef,
     type: "button",
@@ -368,7 +368,7 @@ function Nav({
   }, "WhatsApp"), /*#__PURE__*/React.createElement(Button, {
     variant: "primary",
     as: "a",
-    href: "#quote",
+    href: "contact.html",
     style: {
       flex: 1
     }
@@ -2592,7 +2592,7 @@ function CTABand({
     variant: "gold",
     size: "lg",
     as: "a",
-    href: "#quote"
+    href: "contact.html"
   }, "Request a quote"), /*#__PURE__*/React.createElement(WhatsAppButton, {
     phone: whatsapp,
     variant: "dark",
@@ -2641,12 +2641,12 @@ function Footer({
   const a = C.address || {};
   const e = C.emails || {};
   const s = C.socials || {};
-  const cols = [['Products', '#products', ['Corporate wear', 'Sportswear', 'Traditional wear', 'School & outerwear', 'Workwear', 'Accessories']], ['Services', '#services', ['Embroidery', 'DTF printing', 'Sublimation printing', 'Logo & name branding', 'Corporate branding', 'Bulk orders']], ['Explore', null, ['Home', 'Gallery', 'About us', 'Request a quote', 'WhatsApp us']]];
+  const cols = [['Products', 'products.html', ['Corporate wear', 'Sportswear', 'Traditional wear', 'School & outerwear', 'Workwear', 'Accessories']], ['Services', 'services.html', ['Embroidery', 'DTF printing', 'Sublimation printing', 'Logo & name branding', 'Corporate branding', 'Bulk orders']], ['Explore', null, ['Home', 'Gallery', 'About us', 'Request a quote', 'WhatsApp us']]];
   const exploreHrefs = {
     'Home': '/',
-    'Gallery': '#products',
-    'About us': '#about',
-    'Request a quote': '#quote',
+    'Gallery': 'gallery.html',
+    'About us': 'about.html',
+    'Request a quote': 'contact.html',
     'WhatsApp us': (typeof window !== 'undefined' && window.NB_CONFIG && typeof window.NB_CONFIG.waLink === 'function') ? window.NB_CONFIG.waLink(window.NB_CONFIG.waMessages.general) : 'https://wa.me/27614453680?text=' + encodeURIComponent('Hello Nosibele Design & Embroidery, I would like to enquire about your services.')
   };
   const linkS = {
@@ -3030,7 +3030,7 @@ function App() {
     onRequest: requestItem,
     whatsapp: WA,
     featuredLimit: 6,
-    ctaHref: "#products"
+    ctaHref: "products.html"
   }), /*#__PURE__*/React.createElement(Services, {
     onRequest: requestItem,
     whatsapp: WA
@@ -3057,7 +3057,7 @@ function ProductsPage() {
     WhatsAppButton
   } = window.NosibeleDesignSystem_4fcb98;
   const toQuote = it => {
-    location.href = '/?item=' + encodeURIComponent(it.title) + '#quote';
+    location.href = 'contact.html?item=' + encodeURIComponent(it.title);
   };
   return /*#__PURE__*/React.createElement("div", {
     style: {
@@ -3109,7 +3109,7 @@ function ServicesPage() {
     WhatsAppButton
   } = window.NosibeleDesignSystem_4fcb98;
   const toQuote = it => {
-    location.href = '/?item=' + encodeURIComponent(it.title) + '#quote';
+    location.href = 'contact.html?item=' + encodeURIComponent(it.title);
   };
   return /*#__PURE__*/React.createElement("div", {
     style: {
@@ -3606,7 +3606,7 @@ function GalleryPage() {
   }, /*#__PURE__*/React.createElement(Button, {
     variant: "primary",
     as: "a",
-    href: '/?item=' + encodeURIComponent(light.title) + '#quote'
+    href: 'contact.html?item=' + encodeURIComponent(light.title)
   }, "Request a quote"), /*#__PURE__*/React.createElement(WhatsAppButton, {
     phone: WA,
     message: window.NB_CONFIG ? window.NB_CONFIG.waMessage(light.title) : 'Hello Nosibele Design & Embroidery,\n\nI would like a quotation for the ' + light.title + '.'
