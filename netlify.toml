@@ -49,6 +49,10 @@
 # ---------------------------------------------------------------------------
 # Canonical URL redirects
 # ---------------------------------------------------------------------------
+# SAFETY: Never 301 /products|/services|/gallery|/about|/contact (or their
+# .html URLs) to "/". That hides real pages and browsers cache 301s for a long
+# time. Pretty paths may only map to their matching .html page.
+# Guard: build-tools/public-page-guard.js (runs from prerender).
 [[redirects]]
   from = "/index.html"
   to = "/"

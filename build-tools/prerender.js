@@ -254,5 +254,6 @@ for (const page of PAGES) {
 injectProductsJsonLd(catalogueData);
 writeSitemap(pageImages);
 applyAssetVersions();
+require('./public-page-guard.js');
 console.log('products.html: ItemList JSON-LD injected');
 console.log('sitemap.xml: rewritten with image entries');
